@@ -5,7 +5,7 @@ export class ByEncryptServices implements EncryptService {
     constructor() { }
 
     async execute(data: any): Promise<any> {
-        const saltRounds = 10; // You can adjust this value
+        const saltRounds = 10; 
         return await bcrypt.hash(data, saltRounds);
     }
 

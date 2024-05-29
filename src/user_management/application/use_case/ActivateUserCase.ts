@@ -8,8 +8,7 @@ export class ActivateUserCase {
         let result = await this.userInterface.updateUserVerifiedAt(uuid);
         if (result) {
             return new BaseResponse(null, 'User activated successfully', true, 200);
-        } else {
-            return new BaseResponse(null, 'User not found', false, 404);
-        }
+        } 
+        return new BaseResponse(null, 'User not found', false, 404);
     }
 }

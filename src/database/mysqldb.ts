@@ -1,49 +1,38 @@
+import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
-import mysql from 'mysql2/promise';
 import { Signale } from 'signale';
-import * as fs from 'fs';
 
 dotenv.config();
 
 const signale = new Signale();
 
-const config = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    waitForConnections: true,
-    connectionLimit: 10,
-};
+const sequelize = new Sequelize(process.env.DB_DATABASE || '', process.env.DB_USER || '', process.env.DB_PASSWORD || '', {
+    host: process.env.DB_HOST || '',
+    dialect: 'mysql',
+    pool: {
+        max: 10,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    },
+    logging: false
+});
 
-const pool = mysql.createPool(config);
-
-export async function query(sql: string, params: any[]) {
+async function syncDatabase() {
     try {
-        const conn = await pool.getConnection();
-        signale.success('Conexion a la base de datos exitosa');
-        const result = await conn.execute(sql, params);
-        conn.release();
-        return result;
+        await sequelize.sync({ force: true }); // Esto eliminará y volverá a crear todas las tablas
+        console.log('Database synchronized successfully.');
     } catch (error) {
-        signale.error(error);
-        return null;
+        console.error('Unable to synchronize the database:', error);
+    } finally {
+        await sequelize.close();
     }
 }
 
-async function runMigrationScript(filename: string) {
-    try {
-        const content = fs.readFileSync(filename, 'utf8');
-        const queries = content.split(';').filter((query) => query.trim() !== '');
+syncDatabase();
 
-        for (const querydata of queries) {
-            await query(querydata, []);
-        }
+sequelize.authenticate()
+    .then(() => signale.success('Conexion a la base de datos exitosa'))
+    .catch((error) => signale.error('Error al conectar a la base de datos:', error));
 
-        signale.success(`Migration script '${filename}' executed successfully`);
-    } catch (error) {
-        signale.error(`Error executing migration script '${filename}': ${error}`);
-    }
-}
-
-runMigrationScript('./src/user_management/infraestructure/migrations/mysq_migrations/user_up.sql');
+export default sequelize;

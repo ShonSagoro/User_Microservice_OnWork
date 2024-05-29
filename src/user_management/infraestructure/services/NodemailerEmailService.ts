@@ -3,8 +3,9 @@ import nodemailer from 'nodemailer';
 dotenv.config();
 
 import { TransportOptions } from 'nodemailer';
+import { EmailService } from '../../domain/services/EmailServices';
 
-export class NodemailerEmailService {
+export class NodemailerEmailService implements EmailService{
     private transporter: nodemailer.Transporter;
 
     constructor() {

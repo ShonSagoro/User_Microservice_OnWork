@@ -6,12 +6,21 @@ import { Status } from "../../domain/entities/Status";
 import { Contact } from "../../domain/entities/Contact";
 import { Credentials } from "../../domain/entities/Credentials";
 import { EncryptService } from "../../domain/services/EncriptServices";
-import { TokenServices } from "../services/TokenServices";
+import { TokenServices } from "../../domain/services/TokenServices";
 
 export class MongoDBUserRepository implements UserInterface {
     private collection!: Collection|any;
     constructor() {
         this.initializeCollection();
+    }
+    sign_up(user: User): Promise<User | null> {
+        throw new Error("Method not implemented.");
+    }
+    sign_in(email: string, password: string, encryptionService: EncryptService, tokenServices: TokenServices): Promise<User | null> {
+        throw new Error("Method not implemented.");
+    }
+    sign_out(uuid: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
     }
 
     private async initializeCollection(): Promise<void> {
@@ -26,7 +35,7 @@ export class MongoDBUserRepository implements UserInterface {
                 let contact = new Contact(result.contact.name, result.contact.lastname, result.contact.phoneNumber);
                 let credentials = new Credentials(result.credentials.email, "");
               
-                let user = new User(status, contact, credentials);
+                let user = new User(contact, credentials, status);
                 user.uuid = result.uuid;
                 return user;
             }       
@@ -57,7 +66,7 @@ export class MongoDBUserRepository implements UserInterface {
                 let status = new Status(result.token, result.verifiedAt);
                 let contact = new Contact(result.contact.name, result.contact.lastname, result.contact.phoneNumber);
                 let credentials = new Credentials(result.credentials.email, result.credentials.password);
-                const user = new User(status, contact, credentials);
+                const user = new User(contact, credentials, status);
                 user.uuid=result.uuid;
                 if (await encryptionService.compare(password, user.credentials.password)) {
                     user.status.token = await tokenServices.generateToken(); 
@@ -75,14 +84,17 @@ export class MongoDBUserRepository implements UserInterface {
         }
     }
 
-    async updateUserVerifiedAt(uuid: string): Promise<void> {
+    async updateUserVerifiedAt(uuid: string): Promise<boolean> {
         try {
             const result = await this.collection.findOne({ uuid });
             if (result) {
                 await this.collection.updateOne({ uuid }, { $set: { 'status.verifiedAt': new Date() } });
+                return true;
             }
+            return false;
         } catch (error) {
             console.error(error);
+            return false;
         }
     }
 
@@ -93,8 +105,7 @@ export class MongoDBUserRepository implements UserInterface {
                 let status = new Status(result.token, result.verifiedAt);
                 let contact = new Contact(result.contact.name, result.contact.lastname, result.contact.phoneNumber);
                 let credentials = new Credentials(result.credentials.email, "");
-              
-                let user = new User(status, contact, credentials);
+                let user = new User(contact, credentials, status);
                 user.uuid = result.uuid;
                 return user;
             }       
@@ -121,10 +132,10 @@ export class MongoDBUserRepository implements UserInterface {
         }
     }
 
-    async delete(uuid:string): Promise<void> {
-
+    async delete(uuid:string): Promise<boolean> {
         try {
             await this.collection.deleteOne({ uuid });
+            return true;
         } catch (error) {
             throw new Error('Error deleting user');
         }
@@ -139,7 +150,7 @@ export class MongoDBUserRepository implements UserInterface {
             
             const updatedUser = {
                 'contact.name': user.contact.name !== undefined ? user.contact.name : (user_data?.contact?.name || ''),
-                'contact.lastname': user.contact.lastname !== undefined ? user.contact.lastname : (user_data?.contact?.lastname || ''),
+                'contact.lastname': user.contact.lastName !== undefined ? user.contact.lastName : (user_data?.contact?.lastName || ''),
                 'contact.number_phone': user.contact.phoneNumber !== undefined ? user.contact.phoneNumber : (user_data?.contact?.phoneNumber || ''),
                 'credentials.email': user.credentials.email !== undefined ? user.credentials.email : (user_data?.credentials?.email || ''),
                 'credentials.password': user.credentials.password,
@@ -161,7 +172,7 @@ export class MongoDBUserRepository implements UserInterface {
                 let contact = new Contact(user.contact.name, user.contact.lastname, user.contact.phoneNumber);
                 let credentials = new Credentials(user.credentials.email, "");
                 
-                let newUser = new User(status, contact, credentials);
+                let newUser = new User(contact, credentials, status);
                 newUser.uuid = user.uuid;
                 
                 return newUser;

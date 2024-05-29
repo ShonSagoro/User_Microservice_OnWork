@@ -3,11 +3,11 @@ import { IncomingHttpHeaders } from 'http';
 
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
 import JWTMiddleware from '../../../middleware/JWTMiddleware';
-import { SingOutUserCase } from '../../application/use_case/SignOutUserCase';
+import { SignOutUserCase } from '../../application/use_case/SignOutUserCase';
 
-export class SingOutUserController {
+export class SignOutUserController {
     jwtMiddleware = new JWTMiddleware();
-    constructor(readonly singOutUserCase: SingOutUserCase ) { }
+    constructor(readonly useCase: SignOutUserCase ) { }
 
     async execute(req: Request, res: Response) {
         const { uuid } = req.params;
@@ -20,12 +20,10 @@ export class SingOutUserController {
         const token = authHeader.split(' ')[1];
         try {
             JWTMiddleware.addToBlacklist(token);
-            this.singOutUserCase.execute(uuid);
-            const baseResponse = new BaseResponse("Success", "Sesión cerrada correctamente", true);
-            res.status(200).send(baseResponse);
+            const baseResponse = await this.useCase.execute(uuid);
+            baseResponse.apply(res);
         } catch (error) {
-            const baseResponse = new BaseResponse("Error", "Ha ocurrido un error durante su petición.", false);
-            res.status(500).json(baseResponse);
-        }
+            const baseResponse = new BaseResponse("Error", "Ha ocurrido un error durante su petición.", false, 500);
+            baseResponse.apply(res);        }
     }
 }

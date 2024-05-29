@@ -1,20 +1,21 @@
-import { Credentials } from "../../domain/entities/Credentials";
-import { Status } from "../../domain/entities/Status";
-import { Contact } from "../../domain/entities/Contact";
-import { User } from "../../domain/entities/User";
 import { UserInterface } from "../../domain/ports/UserInterface";
-import { UpdateUserRequest } from "../dtos/request/UpdateUserRequest";
-
+import { BaseResponse } from "../dtos/response/BaseResponse";
+import { UserDtoMapper } from "../mappers/UserDtoMapper";
+import { Request } from "express";
 export class UpdateUserUseCase {
     constructor(readonly userInterface: UserInterface) {}
 
-    async execute(uuid:string, user_update: UpdateUserRequest): Promise<User | null> {
-        let contact = new Contact(user_update.name, user_update.lastName, user_update.phoneNumber)
-        let credentials= new Credentials(user_update.email, user_update.password)
-        let status = new Status("", new Date())
-
-        let user = new User(status, contact, credentials);
-        console.log(user)
-        return this.userInterface.update(uuid, user);
+    async execute(uuid:string, req: Request): Promise<BaseResponse> {
+        let request = UserDtoMapper.toUpdateUserRequest(req);
+        if (!request) {
+            return new BaseResponse(null, 'Bad request', false, 400);
+        }
+        let user = UserDtoMapper.toDomainUserUpdate(request);
+        let result = await this.userInterface.update(uuid, user);
+        if (result) {
+            let response = UserDtoMapper.toUserResponse(result);
+            return new BaseResponse(response, 'User updated successfully', true, 201);
+        }
+        return new BaseResponse(null, 'User not updated', false, 400);
     }
 }

@@ -8,8 +8,7 @@ export class DeleteUserCase {
         let result = await this.userInterface.delete(uuid);
         if (result) {
             return new BaseResponse(null, 'User deleted successfully', true, 200);
-        } else {
-            return new BaseResponse(null, 'User not found', false, 404);
         }
+        return new BaseResponse(null, 'User not found', false, 404);
     }
 }

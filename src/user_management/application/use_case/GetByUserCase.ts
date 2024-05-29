@@ -1,6 +1,8 @@
+import { Response } from 'express';
 import { User } from "../../domain/entities/User";
 import { UserInterface } from "../../domain/ports/UserInterface";
 import { BaseResponse } from "../dtos/response/BaseResponse";
+import { UserDtoMapper } from "../mappers/UserDtoMapper";
 
 
 export class GetByUserCase {
@@ -9,18 +11,18 @@ export class GetByUserCase {
     async executeByEmail(email: string): Promise<BaseResponse> {
         let result = await this.userInteface.findByEmail(email);
         if (result) {
-            return new BaseResponse(result, 'User found', true, 200);
-        } else {
-            return new BaseResponse(null, 'User not found', false, 404);
-        }
+            let response = UserDtoMapper.toUserResponse(result);
+            return new BaseResponse(response, 'User found', true, 200);
+        } 
+        return new BaseResponse(null, 'User not found', false, 404);
     }
 
     async executeByUUID(uuid:string): Promise<BaseResponse> {
-        let result = this.userInteface.findByUUID(uuid);
+        let result = await this.userInteface.findByUUID(uuid);
         if (result) {
-            return new BaseResponse(result, 'User found', true, 200);
-        } else {
-            return new BaseResponse(null, 'User not found', false, 404);
+            let response = UserDtoMapper.toUserResponse(result);
+            return new BaseResponse(response, 'User found', true, 200);
         }
+        return new BaseResponse(null, 'User not found', false, 404);
     }
 }

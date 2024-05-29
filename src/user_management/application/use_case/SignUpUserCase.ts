@@ -1,23 +1,22 @@
-import { Contact } from "../../domain/entities/Contact";
-import { Status } from "../../domain/entities/Status";
-import { User } from "../../domain/entities/User";
-import { Credentials } from "../../domain/entities/Credentials";
 import { UserInterface } from "../../domain/ports/UserInterface";
-import { SignUpUserRequest } from "../dtos/request/SignUpUserRequest";
+import { Request } from "express";
+import { UserDtoMapper } from "../mappers/UserDtoMapper";
+import { BaseResponse } from "../dtos/response/BaseResponse";
 
 export class SignUpUserCase {
     constructor(readonly userInterface: UserInterface) {}
 
-    async execute(singUpUserRequest:SignUpUserRequest): Promise<User | null> {
-        let contact = new Contact(singUpUserRequest.name, singUpUserRequest.lastName, singUpUserRequest.phoneNumber)
-        let credentials= new Credentials(singUpUserRequest.email, singUpUserRequest.password)
-        let status = new Status("", new Date())
-
-        let user = new User(
-            status,
-            contact,
-            credentials
-        )
-        return await this.userInterface.sign_up(user);
+    async execute(req: Request): Promise<BaseResponse> {
+        let request = UserDtoMapper.toSignUpUserRequest(req);
+        if (!request) {
+            return new BaseResponse(null, 'Bad request', false, 400);
+        }
+        let user = UserDtoMapper.toDomainUserSignUp(request);
+        let result = await this.userInterface.sign_up(user);
+        if (result) {
+            let response = UserDtoMapper.toUserResponse(result);
+            return new BaseResponse(response, 'User created successfully', true, 201);
+        }
+        return new BaseResponse(null, 'User not created', false, 400);
     }
 }

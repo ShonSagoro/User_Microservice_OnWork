@@ -5,6 +5,8 @@ import { User } from '../../domain/entities/User';
 import { UserResponse } from '../dtos/response/UserResponse';
 import { Contact } from '../../domain/entities/Contact';
 import { Status } from '../../domain/entities/Status';
+import { UpdateUserRequest } from '../dtos/request/UpdateUserRequest';
+import { SignInUserRequest } from '../dtos/request/SignInUserRequest';
 
 export class UserDtoMapper {
     static toSignUpUserRequest(req: Request): SignUpUserRequest | null {
@@ -17,10 +19,18 @@ export class UserDtoMapper {
         return new SignUpUserRequest(body.email, body.password, body.name, body.lastName, body.phoneNumber);
     }
 
-    static toUpdateUserRequest(req: Request): SignUpUserRequest {
+    static toSignIpUserRequest(req: Request): SignInUserRequest | null{
+        const body = req.body;
+        if (!body.email || !body.password) {
+            return null;
+        }
+        return new SignInUserRequest(body.email, body.password);
+    }
+
+    static toUpdateUserRequest(req: Request): UpdateUserRequest {
         const body = req.body;
 
-        return new SignUpUserRequest(body.email, body.password, body.name, body.lastName, body.phoneNumber);
+        return new UpdateUserRequest(body.email, body.password, body.name, body.lastName, body.phoneNumber);
     }
 
     static toUserResponse(user: User): UserResponse {
@@ -34,9 +44,9 @@ export class UserDtoMapper {
         return new User(contact, credentials, status);
     }
 
-    static toDomainUserUpdate(signUpUserRequest: SignUpUserRequest, user: User): User {
-        let contact = new Contact(signUpUserRequest.name, signUpUserRequest.lastName, signUpUserRequest.phoneNumber);
-        let credentials = new Credentials(signUpUserRequest.email, signUpUserRequest.password);
+    static toDomainUserUpdate(updateUserRequest: UpdateUserRequest): User {
+        let contact = new Contact(updateUserRequest.name, updateUserRequest.lastName, updateUserRequest.phoneNumber);
+        let credentials = new Credentials(updateUserRequest.email, updateUserRequest.password);
         let status = new Status("", new Date());
         return new User(contact, credentials, status);
     }
