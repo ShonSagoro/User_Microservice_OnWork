@@ -11,6 +11,7 @@ export class SingUpUserController {
 
     async execute(req: Request, res: Response) {
         try {
+            req.body.password = await this.encryptionService.execute(req.body.password);
             let baseResponse = await this.useCase.execute(req);
             let user = baseResponse.data;
             let message = `Welcome ${user.name} to our platform`;

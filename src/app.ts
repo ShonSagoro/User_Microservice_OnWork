@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import {Signale} from "signale";
 
-import { setupUserEndpoints } from './user_management/infraestructure/endpoints/UserEnpoints';
+import { setupUserEndpoints } from './user_management/infraestructure/endpoints/UserEndpoints';
 import cors from 'cors';
 dotenv.config();
 

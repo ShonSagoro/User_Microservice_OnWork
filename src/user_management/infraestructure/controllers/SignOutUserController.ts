@@ -12,14 +12,15 @@ export class SignOutUserController {
     async execute(req: Request, res: Response) {
         const { uuid } = req.params;
         const headers = req.headers as IncomingHttpHeaders;
-        const authHeader = headers['authorization'];
+        const authHeader = headers['Authorization'];
+        console.log(authHeader);
 
         if (!authHeader) {
             const baseResponse = new BaseResponse("Error", "Token not provided", false, 401);
             baseResponse.apply(res);
             return;
         }
-        const token = authHeader.split(' ')[1];
+        const token = Array.isArray(authHeader) ? authHeader[0].split(' ')[1] : authHeader.split(' ')[1];
         try {
             JWTMiddleware.addToBlacklist(token);
             const baseResponse = await this.useCase.execute(uuid);

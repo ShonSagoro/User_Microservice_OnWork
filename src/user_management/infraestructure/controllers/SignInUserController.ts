@@ -14,11 +14,12 @@ export class SignInUserController {
             let baseResponse = await this.useCase.execute(req, this.encryptionService, this.tokenServices);
             if (baseResponse.success) {
                 const uuid = baseResponse.data.uuid;
+                console.log(baseResponse)
                 const token = await JWTMiddleware.GenerateToken({ uuid: uuid });
                 const tokens = {
                     uuid: uuid,
                     jwt_token: token,
-                    user_token: baseResponse.data.status.token
+                    user_token: baseResponse.data.token
                 }
                 baseResponse.data = tokens;
                 baseResponse.apply(res);

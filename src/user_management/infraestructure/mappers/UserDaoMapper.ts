@@ -6,11 +6,11 @@ import { Status } from '../../domain/entities/Status';
 
 export class UserDaoMapper {
     static toDomain(userEntity: UserEntity): User{
-        let contact = new Contact(userEntity.name, userEntity.lastName, userEntity.phoneNumber);
-        let credentials = new Credentials(userEntity.email, userEntity.password);
-        let status = new Status(userEntity.token,userEntity.verifiedAt);
+        let contact = new Contact(userEntity.dataValues.name, userEntity.dataValues.lastName, userEntity.dataValues.phoneNumber);
+        let credentials = new Credentials(userEntity.dataValues.email, userEntity.dataValues.password);
+        let status = new Status(userEntity.dataValues.token,userEntity.dataValues.verifiedAt);
         let user = new User(contact, credentials, status);
-        user.uuid = userEntity.uuid;
+        user.uuid = userEntity.dataValues.uuid;
         return user;
     }
 

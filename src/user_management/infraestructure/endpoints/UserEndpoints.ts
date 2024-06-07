@@ -14,5 +14,5 @@ export function setupUserEndpoints(app: Express) {
     app.delete(`/:uuid`, deleteUserController.execute.bind(deleteUserController));
     app.get(`/activate/:uuid`, activateUserController.execute.bind(activateUserController));
     app.get(`/`, listUsersController.execute.bind(listUsersController));
-    app.get(`sign_out/:uuid`, singOutUserController.execute.bind(singOutUserController));
+    app.get(`/sign_out/:uuid`, singOutUserController.execute.bind(singOutUserController));
 }

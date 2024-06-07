@@ -32,7 +32,10 @@ export class UserDtoMapper {
     }
 
     static toUserResponse(user: User): UserResponse {
-        return new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber);
+        if (!user.status.token){
+            user.status.token = "";
+        }
+        return new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.status.token);
     }
 
     static toDomainUserSignUp(signUpUserRequest: SignUpUserRequest): User {
