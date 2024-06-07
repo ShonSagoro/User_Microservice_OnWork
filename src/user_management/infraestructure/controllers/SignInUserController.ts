@@ -12,8 +12,7 @@ export class SignInUserController {
     async execute(req: Request, res: Response) {
         try {
             let baseResponse = await this.useCase.execute(req, this.encryptionService, this.tokenServices);
-            
-            if (baseResponse) {
+            if (baseResponse.success) {
                 const uuid = baseResponse.data.uuid;
                 const token = await JWTMiddleware.GenerateToken({ uuid: uuid });
                 const tokens = {
@@ -23,11 +22,12 @@ export class SignInUserController {
                 }
                 baseResponse.data = tokens;
                 baseResponse.apply(res);
-            } else {
-                const baseResponse = new BaseResponse(null, "User not found", false, 404);
+            } 
+            else {
                 baseResponse.apply(res);
             }
         } catch (error) {
+            console.error(error);
             const baseResponse = new BaseResponse(null, "Internal server error", false, 500);
             baseResponse.apply(res);
         }

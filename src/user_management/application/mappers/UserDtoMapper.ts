@@ -11,11 +11,9 @@ import { SignInUserRequest } from '../dtos/request/SignInUserRequest';
 export class UserDtoMapper {
     static toSignUpUserRequest(req: Request): SignUpUserRequest | null {
         const body = req.body;
-
         if (!body.email || !body.password || !body.name || !body.lastName || !body.phoneNumber) {
             return null;
         }
-
         return new SignUpUserRequest(body.email, body.password, body.name, body.lastName, body.phoneNumber);
     }
 

@@ -24,8 +24,6 @@ async function syncDatabase() {
         console.log('Database synchronized successfully.');
     } catch (error) {
         console.error('Unable to synchronize the database:', error);
-    } finally {
-        await sequelize.close();
     }
 }
 

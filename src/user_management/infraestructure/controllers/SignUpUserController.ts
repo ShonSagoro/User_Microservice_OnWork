@@ -17,6 +17,7 @@ export class SingUpUserController {
             this.emailService.sendEmail(user.email, "welcome", message);
             baseResponse.apply(res);
         } catch (error) {
+            console.error(error);
             const baseResponse = new BaseResponse(null, 'Internal server error', false, 500);
             baseResponse.apply(res);
         }

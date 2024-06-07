@@ -15,7 +15,9 @@ export class SignOutUserController {
         const authHeader = headers['authorization'];
 
         if (!authHeader) {
-            return res.status(401).json({ message: 'Token not provided' });
+            const baseResponse = new BaseResponse("Error", "Token not provided", false, 401);
+            baseResponse.apply(res);
+            return;
         }
         const token = authHeader.split(' ')[1];
         try {
@@ -24,6 +26,7 @@ export class SignOutUserController {
             baseResponse.apply(res);
         } catch (error) {
             const baseResponse = new BaseResponse("Error", "Ha ocurrido un error durante su petición.", false, 500);
-            baseResponse.apply(res);        }
+            baseResponse.apply(res);        
+        }
     }
 }

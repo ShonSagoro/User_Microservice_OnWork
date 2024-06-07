@@ -2,6 +2,7 @@ import { ActivateUserCase } from "../application/use_case/ActivateUserCase";
 import { DeleteUserCase } from "../application/use_case/DeleteUserCase";
 import { GetByUserCase } from "../application/use_case/GetByUserCase";
 import { ListUsersCase } from "../application/use_case/ListUsersCase";
+import { SignInUserUseCase } from "../application/use_case/SignInUserUseCase";
 import { SignOutUserCase } from "../application/use_case/SignOutUserCase";
 import { SignUpUserCase } from "../application/use_case/SignUpUserCase";
 import { UpdateUserUseCase } from "../application/use_case/UpdateUserCase";
@@ -14,12 +15,12 @@ import { SignInUserController } from "./controllers/SignInUserController";
 import { SignOutUserController } from "./controllers/SignOutUserController";
 import { SingUpUserController } from "./controllers/SignUpUserController";
 import { UpdateUserController } from "./controllers/UpdateUserController";
-import { MongoDBUserRepository } from "./repositories/MongoUserRepository";
+import { MysqlUserRepository } from "./repositories/MysqlUserRepository";
 import { ByEncryptServices } from "./services/ByEncryptServices";
 import { NodemailerEmailService } from "./services/NodemailerEmailService";
 import { TokenServices } from "./services/TokenServices";
 
-export const databaseRepository = new MongoDBUserRepository();
+export const databaseRepository = new MysqlUserRepository();
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
@@ -31,7 +32,7 @@ export const updateUserUseCase = new UpdateUserUseCase(databaseRepository);
 export const deleteUserUseCase = new DeleteUserCase(databaseRepository);
 export const listUsersCase = new ListUsersCase(databaseRepository);
 export const activateUserCase = new ActivateUserCase(databaseRepository);
-export const singInUserCase = new SignUpUserCase(databaseRepository);
+export const singInUserCase = new SignInUserUseCase(databaseRepository);
 export const singOutUserCase = new SignOutUserCase(databaseRepository);
 
 export const singInUserController = new SignInUserController(singInUserCase, encriptServices, tokenServices);

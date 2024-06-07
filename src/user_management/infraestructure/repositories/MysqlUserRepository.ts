@@ -10,7 +10,8 @@ import { UserDaoMapper } from '../mappers/UserDaoMapper';
 export class MysqlUserRepository implements UserInterface {
     
     async findByEmail(email: string): Promise<User | null> {
-        const userEntity = await UserEntity.findOne({ where: { email } });
+        console.log('Email:', email);
+        const userEntity =  await UserEntity.findOne({ where: { email: email } });
         return userEntity ? UserDaoMapper.toDomain(userEntity) : null;
     }
 
@@ -51,7 +52,10 @@ export class MysqlUserRepository implements UserInterface {
     async sign_up(user: User): Promise<User | null> {
         try {
             const userEntity = UserDaoMapper.toEntity(user);
-            await userEntity.save()
+            let result = await userEntity.save()
+            console.log('Result:', result);
+            const userEntities = await UserEntity.findAll();
+            console.log('User entity:', userEntities);    
             return user;
         } catch (error) {
             console.error('Error creating user:', error);
@@ -60,10 +64,9 @@ export class MysqlUserRepository implements UserInterface {
     }
 
     async sign_in(email: string, password: string, encryptionService: EncryptService, tokenServices: TokenServices): Promise<User | null> {
-        const userEntity = await UserEntity.findOne({ where: { email } });
-        if (!userEntity) return null;
-        
-        const user = UserDaoMapper.toDomain(userEntity);
+        let user = await this.findByEmail(email);
+        console.log('User:', user);
+        if (!user) return null;
         if (await encryptionService.compare(password, user.credentials.password)) {
             user.status.token = await tokenServices.generateToken();
             await UserEntity.update({ token: user.status.token }, { where: { uuid: user.uuid } });
