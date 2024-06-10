@@ -4,15 +4,16 @@ import { IncomingHttpHeaders } from 'http';
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
 import JWTMiddleware from '../../../middleware/JWTMiddleware';
 import { SignOutUserCase } from '../../application/use_case/SignOutUserCase';
+import { IUserSaga } from '../../domain/services/IUserSaga';
 
 export class SignOutUserController {
     jwtMiddleware = new JWTMiddleware();
-    constructor(readonly useCase: SignOutUserCase ) { }
+    constructor(readonly useCase: SignOutUserCase, readonly useSaga: IUserSaga) { }
 
     async execute(req: Request, res: Response) {
         const { uuid } = req.params;
         const headers = req.headers as IncomingHttpHeaders;
-        const authHeader = headers['Authorization'];
+        const authHeader = headers['authorization'];
         console.log(authHeader);
 
         if (!authHeader) {
@@ -20,9 +21,10 @@ export class SignOutUserController {
             baseResponse.apply(res);
             return;
         }
-        const token = Array.isArray(authHeader) ? authHeader[0].split(' ')[1] : authHeader.split(' ')[1];
+        const token = authHeader[0].split(' ')[1]
         try {
             JWTMiddleware.addToBlacklist(token);
+            await this.useSaga.sendToken(token);
             const baseResponse = await this.useCase.execute(uuid);
             baseResponse.apply(res);
         } catch (error) {

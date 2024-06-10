@@ -30,7 +30,8 @@ class JWTMiddleware {
         try {
             jwt.verify(token, JWTMiddleware.JWT_SECRET);
             next();
-        } catch (error) {
+        } catch (error:any) {
+            console.error(`Token validation error: ${error}`);
             return res.status(401).json({ message: 'Invalid token' });
         }
     }

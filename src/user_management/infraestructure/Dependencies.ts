@@ -19,12 +19,14 @@ import { MysqlUserRepository } from "./repositories/MysqlUserRepository";
 import { ByEncryptServices } from "./services/ByEncryptServices";
 import { NodemailerEmailService } from "./services/NodemailerEmailService";
 import { TokenServices } from "./services/TokenServices";
+import { UserSagaImpl } from "./services/UserSagaImpl";
 
 export const databaseRepository = new MysqlUserRepository();
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
 export const tokenServices = new TokenServices();
+export const userSaga = new UserSagaImpl();
 
 export const singUpUserCase = new SignUpUserCase(databaseRepository);
 export const getUserUseCase = new GetByUserCase(databaseRepository);
@@ -43,4 +45,4 @@ export const getByEmailController = new GetUserByEmailController(getUserUseCase)
 export const updateUserController = new UpdateUserController(updateUserUseCase, encriptServices);
 export const listUsersController = new ListUsersController(listUsersCase);
 export const activateUserController = new ActivateUserController(activateUserCase);
-export const singOutUserController = new SignOutUserController(singOutUserCase);
+export const singOutUserController = new SignOutUserController(singOutUserCase, userSaga);
