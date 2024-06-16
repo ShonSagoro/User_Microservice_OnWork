@@ -3,7 +3,6 @@ import { EncryptService } from '../../domain/services/EncriptServices';
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
 import { SignInUserUseCase } from '../../application/use_case/SignInUserUseCase';
 import { TokenServices } from '../../domain/services/TokenServices';
-import { SignInUserRequest } from '../../application/dtos/request/SignInUserRequest';
 import { Request, Response } from "express";
 
 export class SignInUserController {

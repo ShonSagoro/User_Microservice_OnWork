@@ -3,11 +3,12 @@ import { Request } from "express";
 import { UserDtoMapper } from "../mappers/UserDtoMapper";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 
-export class SignUpUserCase {
+export class SignUpUserUseCase {
     constructor(readonly userInterface: UserInterface) {}
 
     async execute(req: Request): Promise<BaseResponse> {
         let request = UserDtoMapper.toSignUpUserRequest(req);
+        console.log(request);
         if (!request) {
             return new BaseResponse(null, 'Bad request', false, 400);
         }

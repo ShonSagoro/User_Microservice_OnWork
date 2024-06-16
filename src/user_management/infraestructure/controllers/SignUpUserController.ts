@@ -2,17 +2,21 @@ import { BaseResponse } from './../../application/dtos/response/BaseResponse';
 import { EmailService } from '../../domain/services/EmailServices';
 import { Request, Response } from "express";
 import { EncryptService } from '../../domain/services/EncriptServices';
-import { SignUpUserCase } from '../../application/use_case/SignUpUserCase';
+import { SignUpUserUseCase } from '../../application/use_case/SignUpUserUseCase';
 
 export class SingUpUserController {
 
-    constructor(readonly useCase: SignUpUserCase, readonly emailService: EmailService, readonly encryptionService: EncryptService) {
+    constructor(readonly useCase: SignUpUserUseCase, readonly emailService: EmailService, readonly encryptionService: EncryptService) {
     }
 
     async execute(req: Request, res: Response) {
         try {
             req.body.password = await this.encryptionService.execute(req.body.password);
             let baseResponse = await this.useCase.execute(req);
+            if (!baseResponse.success) {
+                baseResponse.apply(res);
+                return;
+            }
             let user = baseResponse.data;
             let message = `Welcome ${user.name} to our platform`;
             this.emailService.sendEmail(user.email, "welcome", message);

@@ -7,6 +7,7 @@ import { EncryptService } from "../../domain/services/EncriptServices";
 import { TokenServices } from "../../domain/services/TokenServices";
 import { UserDaoMapper } from '../mappers/UserDaoMapper';
 import sequelize from "../../../database/mysqldb";
+import { Profile } from "../../domain/entities/Profile";
 
 export class MysqlUserRepository implements UserInterface {
     private async withTransaction(callback: (transaction: any) => Promise<any>): Promise<any> {
@@ -32,7 +33,7 @@ export class MysqlUserRepository implements UserInterface {
     }
 
 
-     async findByUUID(uuid: string, transaction?: any): Promise<User | null> {
+    async findByUUID(uuid: string, transaction?: any): Promise<User | null> {
         try {
             return await UserEntity.findByPk(uuid, { transaction })
                 .then(userEntity => userEntity ? UserDaoMapper.toDomain(userEntity) : null);
@@ -132,5 +133,24 @@ export class MysqlUserRepository implements UserInterface {
             console.error('Error signing out:', error);
             return false;
         }
+    }
+
+    async update_user_verified_at(uuid: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    async update_password(uuid: string, old_password: string, new_password: string): Promise<User> {
+        throw new Error("Method not implemented.");
+    }
+    async update_role(uuid: string, role: string): Promise<User> {
+        throw new Error("Method not implemented.");
+    }
+    async update_plan(uuid: string, plan: string): Promise<User> {
+        throw new Error("Method not implemented.");
+    }
+    async update_profile(uuid: string, profile: Profile): Promise<User> {
+        throw new Error("Method not implemented.");
+    }
+    async update_ubication(uuid: string, longitude: string, latitude: string): Promise<User> {
+        throw new Error("Method not implemented.");
     }
 }

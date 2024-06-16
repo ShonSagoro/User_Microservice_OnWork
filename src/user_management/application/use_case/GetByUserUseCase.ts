@@ -2,7 +2,7 @@ import { UserInterface } from "../../domain/ports/UserInterface";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 import { UserDtoMapper } from "../mappers/UserDtoMapper";
 
-export class GetByUserCase {
+export class GetByUserUseCase {
     constructor(readonly userInteface: UserInterface) {}
 
     async executeByEmail(email: string): Promise<BaseResponse> {

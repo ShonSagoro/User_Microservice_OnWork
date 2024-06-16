@@ -10,6 +10,14 @@ class UserEntity extends Model {
     public name!: string;
     public lastName!: string;
     public phoneNumber!: string;
+    public birthday!: Date;
+    public region!: string;
+    public plan!: string;
+    public role!: string;
+    public latitude!: number;
+    public longitude!: number;
+    public description!: string;
+    public company!: string;
 }
 
 UserEntity.init(
@@ -46,6 +54,38 @@ UserEntity.init(
         phoneNumber: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        birthday: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        region: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        plan: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        latitude: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        longitude: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        company: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
     },
     {

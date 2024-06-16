@@ -1,14 +1,13 @@
-FROM node:latest
+FROM node:20
 
-WORKDIR /usr/app
+WORKDIR /app
 
 COPY package*.json ./
-COPY src ./src
-COPY .env ./
-
 RUN npm install
 RUN npm install -g ts-node-dev
 
-EXPOSE 8080
+COPY . .
 
-CMD ["tsnd","--respawn" ,"src/app.ts"]
+EXPOSE 3001
+
+CMD ["npm", "run", "dev"]

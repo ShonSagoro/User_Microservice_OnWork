@@ -3,7 +3,7 @@ import { UserInterface } from "../../domain/ports/UserInterface";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 import { UserDtoMapper } from "../mappers/UserDtoMapper";
 
-export class ListUsersCase {
+export class ListUsersUseCase {
     constructor(readonly userInterface: UserInterface) {}
 
     async execute(): Promise<BaseResponse> {

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
-import { DeleteUserCase } from "../../application/use_case/DeleteUserCase";
+import { DeleteUserUseCase } from "../../application/use_case/DeleteUserUseCase";
 
 export class DeleteUserController {
-  constructor(readonly useCase: DeleteUserCase) {}
+  constructor(readonly useCase: DeleteUserUseCase) {}
 
   async execute(req: Request, res: Response) {
     const { uuid } = req.params;

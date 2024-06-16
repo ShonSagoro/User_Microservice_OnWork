@@ -1,14 +1,15 @@
+import { singOutUserCase } from './../Dependencies';
 import { Request, Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
 
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
 import JWTMiddleware from '../../../middleware/JWTMiddleware';
-import { SignOutUserCase } from '../../application/use_case/SignOutUserCase';
 import { IUserSaga } from '../../domain/services/IUserSaga';
+import { SignOutUserUseCase } from '../../application/use_case/SignOutUserUseCase';
 
 export class SignOutUserController {
     jwtMiddleware = new JWTMiddleware();
-    constructor(readonly useCase: SignOutUserCase, readonly useSaga: IUserSaga) { }
+    constructor(readonly useCase: SignOutUserUseCase, readonly useSaga: IUserSaga) { }
 
     async execute(req: Request, res: Response) {
         const { uuid } = req.params;

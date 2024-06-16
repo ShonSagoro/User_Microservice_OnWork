@@ -16,7 +16,7 @@ export class SignInUserUseCase {
         let result = await this.userInterface.sign_in(singInUserRequest.email, singInUserRequest.password, encryptionService, tokenServices);
         console.log(result);
         if (result) {
-            let response = UserDtoMapper.toUserResponse(result);
+            let response = UserDtoMapper.toTokenUserReponse(result);
             return new BaseResponse(response, 'User signed in successfully', true, 200);
         }
         return new BaseResponse(null, 'User not found', false, 404);

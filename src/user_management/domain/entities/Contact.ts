@@ -3,5 +3,7 @@ export class Contact {
         public name: string,
         public lastName: string,
         public phoneNumber: string,
+        public birthday: Date,
+        public region: string,
     ) {}
 }

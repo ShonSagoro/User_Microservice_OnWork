@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
 import { UserResponse } from '../../application/dtos/response/UserResponse';
-import { GetByUserCase } from '../../application/use_case/GetByUserCase';
+import { GetByUserUseCase } from '../../application/use_case/GetByUserUseCase';
 
 export default class GetUserByEmailController {
-    constructor(readonly useCase: GetByUserCase) { }
+    constructor(readonly useCase: GetByUserUseCase) { }
     
     async execute(req: Request, res: Response): Promise<void> {
         const { email } = req.params;

@@ -1,9 +1,9 @@
+import { ListUsersUseCase } from '../../application/use_case/ListUsersUseCase';
 import { BaseResponse } from './../../application/dtos/response/BaseResponse';
 import { Request, Response } from "express";
-import { ListUsersCase } from '../../application/use_case/ListUsersCase';
 
 export class ListUsersController {
-    constructor(readonly useCase: ListUsersCase) { }
+    constructor(readonly useCase: ListUsersUseCase) { }
 
     async execute(req: Request, res: Response) {
         try {
