@@ -6,19 +6,18 @@ import { SignUpUserUseCase } from '../../application/use_case/SignUpUserUseCase'
 
 export class SingUpUserController {
 
-    constructor(readonly useCase: SignUpUserUseCase, readonly emailService: EmailService, readonly encryptionService: EncryptService) {
+    constructor(readonly useCase: SignUpUserUseCase, readonly emailService: EmailService) {
     }
 
     async execute(req: Request, res: Response) {
         try {
-            req.body.password = await this.encryptionService.execute(req.body.password);
             let baseResponse = await this.useCase.execute(req);
             if (!baseResponse.success) {
                 baseResponse.apply(res);
                 return;
             }
             let user = baseResponse.data;
-            let message = `Welcome ${user.name} to our platform`;
+            let message = `Welcome ${user.name} to our platform, your code is ${user.token}`;
             this.emailService.sendEmail(user.email, "welcome", message);
             baseResponse.apply(res);
         } catch (error) {

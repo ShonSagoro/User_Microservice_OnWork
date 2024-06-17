@@ -4,11 +4,10 @@ import { EncryptService } from "../../domain/services/EncriptServices";
 import { UpdateUserUseCase } from "../../application/use_case/UpdateUserUseCase";
 
 export class UpdateUserController {
-    constructor(readonly useCase: UpdateUserUseCase, readonly encryptionService: EncryptService) { }
+    constructor(readonly useCase: UpdateUserUseCase) { }
 
     async execute(req: Request, res: Response) {
         const { uuid } = req.params;
-        req.body.password = await this.encryptionService.execute(req.body.password);
         try {
             const baseResponse = await this.useCase.execute(uuid, req);
             baseResponse.apply(res);

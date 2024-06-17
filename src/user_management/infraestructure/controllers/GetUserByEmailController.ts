@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
-import { UserResponse } from '../../application/dtos/response/UserResponse';
 import { GetByUserUseCase } from '../../application/use_case/GetByUserUseCase';
 
 export default class GetUserByEmailController {

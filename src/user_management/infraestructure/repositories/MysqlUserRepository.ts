@@ -10,6 +10,10 @@ import sequelize from "../../../database/mysqldb";
 import { Profile } from "../../domain/entities/Profile";
 
 export class MysqlUserRepository implements UserInterface {
+
+    constructor(readonly encryptionService: EncryptService, readonly tokenServices: TokenServices) {
+    }
+
     private async withTransaction(callback: (transaction: any) => Promise<any>): Promise<any> {
         const transaction = await sequelize.transaction();
         try {
@@ -55,10 +59,16 @@ export class MysqlUserRepository implements UserInterface {
 
     async update(uuid: string, user: User, transaction?: any): Promise<User | null> {
         try {
+            const existingUser = await this.findByUUID(uuid);
+            if (!existingUser) return null;
+    
+            const updateData: Partial<UserEntity> = UserDaoMapper.toUpdateEntity(user, uuid);
             return await this.withTransaction(async (transaction: any) => {
-                const userEntity = UserDaoMapper.toEntity(user);
-                await UserEntity.update(userEntity, { where: { uuid }, transaction });
-                return user;
+                await UserEntity.update(updateData, { where: { uuid }, transaction });
+                return await this.withTransaction(async (transaction: any) => { 
+                    await UserEntity.update(updateData, { where: { uuid }, transaction }); 
+                    return user; 
+                });
             });
         } catch (error) {
             console.error('Error updating user:', error);
@@ -77,21 +87,10 @@ export class MysqlUserRepository implements UserInterface {
         }
     }
 
-    async updateUserVerifiedAt(uuid: string, transaction?: any): Promise<boolean> {
-        try {
-            return await this.withTransaction(async (transaction: any) => {
-                await UserEntity.update({ verifiedAt: new Date() }, { where: { uuid }, transaction });
-                return true;
-            });
-        } catch (error) {
-            console.error('Error updating user verified at:', error);
-            return false;
-        }
-    }
-
     async sign_up(user: User): Promise<User | null> {
         try {
             return await this.withTransaction(async (transaction: any) => {
+                user.status.token = await this.tokenServices.generateToken();
                 const userEntity = UserDaoMapper.toEntity(user);
                 await userEntity.save({ transaction });
                 return user;
@@ -102,16 +101,13 @@ export class MysqlUserRepository implements UserInterface {
         }
     }
 
-    async sign_in(email: string, password: string, encryptionService: EncryptService, tokenServices: TokenServices): Promise<User | null> {
+    async sign_in(email: string, password: string): Promise<User | null> {
         try {
             return await this.withTransaction(async (transaction: any) => {
                 let user = await this.findByEmail(email, transaction);
                 console.log(user);
                 if (!user) return null;
-                if (await encryptionService.compare(password, user.credentials.password)) {
-                    user.status.token = await tokenServices.generateToken();
-                    console.log(user.status.token);
-                    await UserEntity.update({ token: user.status.token }, { where: { uuid: user.uuid }, transaction });
+                if (await this.encryptionService.compare(password, user.credentials.password)) {
                     return user;
                 } else {
                     return null;
@@ -135,9 +131,21 @@ export class MysqlUserRepository implements UserInterface {
         }
     }
 
-    async update_user_verified_at(uuid: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async update_user_verified_at(uuid: string, token:string): Promise<boolean> {
+        try {
+            let userExists = await this.findByUUID(uuid);
+            if (!userExists) return false;
+            if (userExists.status.token !== token) return false;
+            return await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ verifiedAt: new Date(), verified: true}, { where: { uuid }, transaction });
+                return true;
+            });
+        } catch (error) {
+            console.error('Error updating user verified at:', error);
+            return false;
+        }
     }
+
     async update_password(uuid: string, old_password: string, new_password: string): Promise<User> {
         throw new Error("Method not implemented.");
     }

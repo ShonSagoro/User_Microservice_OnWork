@@ -18,15 +18,15 @@ import { UpdateUserController } from "./controllers/UpdateUserController";
 import { MysqlUserRepository } from "./repositories/MysqlUserRepository";
 import { ByEncryptServices } from "./services/ByEncryptServices";
 import { NodemailerEmailService } from "./services/NodemailerEmailService";
-import { TokenServices } from "./services/TokenServices";
+import { TokenAuthServices } from "./services/TokenServices";
 import { UserSagaImpl } from "./services/UserSagaImpl";
-
-export const databaseRepository = new MysqlUserRepository();
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
-export const tokenServices = new TokenServices();
+export const tokenServices = new TokenAuthServices();
 export const userSaga = new UserSagaImpl();
+
+export const databaseRepository = new MysqlUserRepository(encriptServices, tokenServices);
 
 export const singUpUserCase = new SignUpUserUseCase(databaseRepository);
 export const getUserUseCase = new GetByUserUseCase(databaseRepository);
@@ -37,12 +37,12 @@ export const activateUserCase = new ActivateUserUseCase(databaseRepository);
 export const singInUserCase = new SignInUserUseCase(databaseRepository);
 export const singOutUserCase = new SignOutUserUseCase(databaseRepository);
 
-export const singInUserController = new SignInUserController(singInUserCase, encriptServices, tokenServices);
-export const singUpUserController = new SingUpUserController(singUpUserCase, nodemailerEmailService, encriptServices);
+export const singInUserController = new SignInUserController(singInUserCase);
+export const singUpUserController = new SingUpUserController(singUpUserCase, nodemailerEmailService);
 export const deleteUserController = new DeleteUserController(deleteUserUseCase);
 export const getByUuidController = new GetUserByUuidController(getUserUseCase);
 export const getByEmailController = new GetUserByEmailController(getUserUseCase);
-export const updateUserController = new UpdateUserController(updateUserUseCase, encriptServices);
+export const updateUserController = new UpdateUserController(updateUserUseCase);
 export const listUsersController = new ListUsersController(listUsersCase);
 export const activateUserController = new ActivateUserController(activateUserCase);
 export const singOutUserController = new SignOutUserController(singOutUserCase, userSaga);

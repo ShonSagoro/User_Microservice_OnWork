@@ -2,15 +2,14 @@ import JWTMiddleware from '../../../middleware/JWTMiddleware';
 import { EncryptService } from '../../domain/services/EncriptServices';
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
 import { SignInUserUseCase } from '../../application/use_case/SignInUserUseCase';
-import { TokenServices } from '../../domain/services/TokenServices';
 import { Request, Response } from "express";
 
 export class SignInUserController {
-    constructor(readonly useCase: SignInUserUseCase, readonly encryptionService: EncryptService, readonly tokenServices: TokenServices) { }
+    constructor(readonly useCase: SignInUserUseCase) { }
 
     async execute(req: Request, res: Response) {
         try {
-            let baseResponse = await this.useCase.execute(req, this.encryptionService, this.tokenServices);
+            let baseResponse = await this.useCase.execute(req);
             if (baseResponse.success) {
                 const uuid = baseResponse.data.uuid;
                 console.log(baseResponse)
@@ -18,7 +17,6 @@ export class SignInUserController {
                 const tokens = {
                     uuid: uuid,
                     jwt_token: token,
-                    user_token: baseResponse.data.token
                 }
                 baseResponse.data = tokens;
                 baseResponse.apply(res);

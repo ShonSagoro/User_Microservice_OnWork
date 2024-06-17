@@ -1,4 +1,3 @@
-import { singOutUserCase } from './../Dependencies';
 import { Request, Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
 

@@ -18,6 +18,7 @@ class UserEntity extends Model {
     public longitude!: number;
     public description!: string;
     public company!: string;
+    public verified!: boolean;
 }
 
 UserEntity.init(
@@ -85,6 +86,10 @@ UserEntity.init(
         },
         company: {
             type: DataTypes.STRING,
+            allowNull: true,
+        },
+        verified: {
+            type: DataTypes.BOOLEAN,
             allowNull: true,
         },
     },

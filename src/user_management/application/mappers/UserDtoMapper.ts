@@ -22,6 +22,8 @@ import { UpdatePlanUserRequest } from '../dtos/request/UpdatePlanUserRequest';
 import { PlanUserUpdateResponse } from '../dtos/response/PlanUserUpdateResponse';
 import { UpdateRoleUserRequest } from '../dtos/request/UpdateRoleUserRequest';
 import { RoleUserUpdateResponse } from '../dtos/response/RoleUserUpdateResponse';
+import { SingUpUserResponse } from '../dtos/response/SingUpUserResponse';
+import { VerifiedUserRequest } from '../dtos/request/VerifiedUserRequest';
 
 export class UserDtoMapper {
     
@@ -34,6 +36,10 @@ export class UserDtoMapper {
         return new SignUpUserRequest(body.email, body.password, body.name, body.lastName, body.phoneNumber, body.birthday, body.region);
     }
 
+    static toActivateUserRequest(req: Request): VerifiedUserRequest | null {
+        const body = req.body;
+        return new VerifiedUserRequest(body.token);
+    }
     static toUpdatePlanUserRequest(req: Request): UpdatePlanUserRequest | null {
         const body = req.body;
         if (!body.plan) {
@@ -91,7 +97,7 @@ export class UserDtoMapper {
     }
 
     static toTokenUserReponse(user: User): TokenUserReponse {
-        return new TokenUserReponse(user.uuid, user.status.token);
+        return new TokenUserReponse(user.uuid);
     }
 
     static toUbicationUserResponse(user: User): UbicationUserResponse {
@@ -106,10 +112,14 @@ export class UserDtoMapper {
         return new RoleUserUpdateResponse(user.uuid, user.role);
     }
 
+    static toSingUpUserResponse(user: User):SingUpUserResponse  {
+        return new SingUpUserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.status.token);
+    }
+
     static toDomainUserSignUp(signUpUserRequest: SignUpUserRequest): User {
         let contact = new Contact(signUpUserRequest.name, signUpUserRequest.lastName, signUpUserRequest.phoneNumber, new Date(signUpUserRequest.birthday), signUpUserRequest.region);
         let credentials = new Credentials(signUpUserRequest.email, signUpUserRequest.password);
-        let status = new Status("", new Date());
+        let status = new Status("", new Date(), false);
         let plan = Plan.FREE;
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);
@@ -120,7 +130,7 @@ export class UserDtoMapper {
     static toDomainUserUpdate(updateUserRequest: UpdateUserRequest): User {
         let contact = new Contact(updateUserRequest.name, updateUserRequest.lastName, updateUserRequest.phoneNumber, new Date(updateUserRequest.birthday), updateUserRequest.region);
         let credentials = new Credentials(updateUserRequest.email, "");
-        let status = new Status("", new Date);
+        let status = new Status("", new Date, false);
         let plan = Plan.FREE;
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);
