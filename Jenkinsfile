@@ -6,7 +6,9 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'user_microservices_env', variable: 'ENV_FILE')]) {
                     script {
+                        sh 'ls -ld'
                         sh 'cp $ENV_FILE .env'
+                        sh 'cat $WORKSPACE/.env'
                     }
                 }
             }
