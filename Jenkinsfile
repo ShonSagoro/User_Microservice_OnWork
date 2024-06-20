@@ -4,11 +4,11 @@ pipeline {
     stages {
            stage('Prepare Environment') {
             steps {
-                withCredentials([file(credentialsId: 'user_microservices_env', variable: 'ENV_FILE')]) {
+               withCredentials([file(credentialsId: 'user_microservices_env', variable: 'ENV_FILE')]) {
                     script {
-                        sh 'ls -ld'
-                        sh 'cat $ENV_FILE/.env'
-                        sh 'cp $ENV_FILE .env'
+                        
+                        sh "cp \$ENV_FILE \$WORKSPACE/.env"
+                        
                         sh 'cat $WORKSPACE/.env'
                     }
                 }
