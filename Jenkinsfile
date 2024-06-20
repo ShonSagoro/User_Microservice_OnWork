@@ -7,7 +7,6 @@ pipeline {
                 withCredentials([file(credentialsId: 'user_microservices_env', variable: 'ENV_FILE')]) {
                     script {
                         sh 'cp $ENV_FILE .env'
-                        sh 'cat .env'
                     }
                 }
             }
@@ -15,7 +14,7 @@ pipeline {
         stage('Build and Test') {
             steps {
                 script {
-                    sh 'docker-compose up --build -d'
+                    sh 'docker compose up --build -d'
                 }
             }
         }
@@ -29,8 +28,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh 'docker-compose down'
-                    sh 'docker-compose up -d'
+                    sh 'docker compose down'
+                    sh 'docker compose up -d'
                 }
             }
         }
