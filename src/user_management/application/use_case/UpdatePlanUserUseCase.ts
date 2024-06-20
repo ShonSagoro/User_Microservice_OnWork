@@ -3,7 +3,7 @@ import { BaseResponse } from "../dtos/response/BaseResponse";
 
 export class UpdatePlanUserUseCase {
     constructor(private userInterface: UserInterface) { }
-    async updatePlan(uuid: string): Promise<BaseResponse> {
+    async execute(uuid: string): Promise<BaseResponse> {
         //TODO: reviasr si pago o no.
         let pago = true;
         if (!pago) {

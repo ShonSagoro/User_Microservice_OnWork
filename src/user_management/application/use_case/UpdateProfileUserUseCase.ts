@@ -3,9 +3,9 @@ import { UserInterface } from "../../domain/ports/UserInterface";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 import { UserDtoMapper } from "../mappers/UserDtoMapper";
 
-export class UpdatePlanUserUseCase {
+export class UpdateProfileUserUseCase {
     constructor(private userInterface: UserInterface) { }
-    async updatePlan(uuid: string, req: Request): Promise<BaseResponse> {
+    async execute(uuid: string, req: Request): Promise<BaseResponse> {
         let profile = UserDtoMapper.toUpdateProfileUserRequest(req);
         if (!profile) {
             return new BaseResponse(null, 'Bad request', false, 400);

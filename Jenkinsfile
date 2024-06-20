@@ -2,6 +2,16 @@ pipeline {
     agent any
 
     stages {
+           stage('Prepare Environment') {
+            steps {
+                withCredentials([file(credentialsId: 'user_microservices_env', variable: 'ENV_FILE')]) {
+                    script {
+                        sh 'cp $ENV_FILE .env'
+                        sh 'cat .env'
+                    }
+                }
+            }
+        }
         stage('Build and Test') {
             steps {
                 script {

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
-import { UpdateUserUseCase } from "../../application/use_case/UpdateUserUseCase";
+import { UpdateUbicationUseCase } from "../../application/use_case/UpdateUbicationUseCase";
 
-export class UpdateUserController {
-    constructor(readonly useCase: UpdateUserUseCase) { }
+export class UpdateUbicationController {
+    constructor(readonly useCase: UpdateUbicationUseCase) { }
 
     async execute(req: Request, res: Response) {
         const { uuid } = req.params;

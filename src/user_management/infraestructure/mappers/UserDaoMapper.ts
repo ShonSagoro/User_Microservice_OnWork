@@ -15,14 +15,25 @@ export class UserDaoMapper {
         let ubication = new Ubication(userEntity.dataValues.latitude, userEntity.dataValues.longitude);
         let profile = new Profile(userEntity.dataValues.description, userEntity.dataValues.company);
         let credentials = new Credentials(userEntity.dataValues.email, userEntity.dataValues.password);
-        let status = new Status(userEntity.dataValues.token,userEntity.dataValues.verifiedAt);
+        let status = new Status(userEntity.dataValues.token,userEntity.dataValues.verifiedAt, userEntity.dataValues.verified);
         let user = new User(contact, credentials, status, plan, role, ubication, profile);
         user.uuid = userEntity.dataValues.uuid;
         return user;
     }
 
+    static toUpdateEntity(user: User, uuid: string): UserEntity {
+        return UserEntity.build({
+            uuid: uuid,
+            email: user.credentials.email,
+            name: user.contact.name,
+            lastName: user.contact.lastName,
+            phoneNumber: user.contact.phoneNumber,
+            birthday: user.contact.birthday,
+            region: user.contact.region,            
+        })
+    }
+    
     static toEntity(user: User): UserEntity {
-
         return UserEntity.build(
             {
                 uuid: user.uuid,
@@ -40,7 +51,8 @@ export class UserDaoMapper {
                 latitude: user.ubication.latitude,
                 longitude: user.ubication.longitude,
                 description: user.profile.description,
-                company: user.profile.company
+                company: user.profile.company,
+                verified: user.status.verified
             }
         );
     }

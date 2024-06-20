@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
-import { UpdateUserUseCase } from "../../application/use_case/UpdateUserUseCase";
+import { UpdatePlanUserUseCase } from "../../application/use_case/UpdatePlanUserUseCase";
 
-export class UpdateUserController {
-    constructor(readonly useCase: UpdateUserUseCase) { }
+export class UpdatePlanUserController {
+    constructor(readonly useCase: UpdatePlanUserUseCase) { }
 
     async execute(req: Request, res: Response) {
         const { uuid } = req.params;
         try {
-            const baseResponse = await this.useCase.execute(uuid, req);
+            const baseResponse = await this.useCase.execute(uuid);
             baseResponse.apply(res);
         } catch (error) {
             const baseResponse = new BaseResponse(null, "Internal server error", false, 500);
