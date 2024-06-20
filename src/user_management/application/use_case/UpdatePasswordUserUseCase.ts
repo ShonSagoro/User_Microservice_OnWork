@@ -7,11 +7,12 @@ export class UpdatePasswordUserUseCase {
     constructor(readonly userInterface: UserInterface) {}
 
     async execute(uuid:string, req: Request): Promise<BaseResponse> {
+        console.log('UpdatePasswordUserUseCase');
         let updatePasswordUserRequest = UserDtoMapper.toUpdatePasswordUserRequest(req);
         if (!updatePasswordUserRequest) {
             return new BaseResponse(null, 'Bad request', false, 400);
         }
-        let result = await this.userInterface.update_password(uuid, updatePasswordUserRequest.newPassword, updatePasswordUserRequest.newPassword);
+        let result = await this.userInterface.update_password(uuid, updatePasswordUserRequest.password, updatePasswordUserRequest.newPassword);
         console.log(result);
         if (result) {
             let response = UserDtoMapper.toPasswordUserResponse(result);

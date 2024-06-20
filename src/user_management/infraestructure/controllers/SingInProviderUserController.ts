@@ -1,10 +1,10 @@
 import JWTMiddleware from '../../../middleware/JWTMiddleware';
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
-import { SignInUserUseCase } from '../../application/use_case/SignInUserUseCase';
 import { Request, Response } from "express";
+import { SignInProviderUserUseCase } from '../../application/use_case/SignInProviderUserUseCase';
 
-export class SignInUserController {
-    constructor(readonly useCase: SignInUserUseCase) { }
+export class SingInProviderUserController {
+    constructor(readonly useCase: SignInProviderUserUseCase) { }
 
     async execute(req: Request, res: Response) {
         try {

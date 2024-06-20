@@ -12,10 +12,11 @@ export interface UserInterface {
     update_user_verified_at(uuid: string, token:string):Promise<boolean>;
     sign_up(user: User): Promise<User | null>;
     sign_in (email:string, password:string):Promise<User|null>;
+    sing_in_provider (email:string, password:string):Promise<User|null>;
     sign_out (uuid:string):Promise<boolean>; 
-    update_password(uuid:string, old_password:string, new_password:string):Promise<User>; //direct
-    update_role(uuid:string, role:string):Promise<User>; //direct
-    update_plan(uuid:string, plan:string):Promise<User>; //Plan with logic of payment
-    update_profile(uuid:string, profile: Profile):Promise<User>; //direct
-    update_ubication(uuid:string, longitude:string, latitude:string):Promise<User>; //direct
+    update_password(uuid:string, old_password:string, new_password:string):Promise<User|null>; //direct
+    update_role(uuid:string, role:string):Promise<User|null>; //direct
+    update_plan(uuid:string, plan:string):Promise<User|null>; //Plan with logic of payment
+    update_profile(uuid:string, profile: Profile):Promise<User|null>; //direct
+    update_ubication(uuid:string, longitude:number, latitude:number):Promise<User|null>; //direct
 }

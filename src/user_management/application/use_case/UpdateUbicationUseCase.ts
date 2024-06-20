@@ -2,21 +2,25 @@ import { Request } from "express";
 import { UserInterface } from "../../domain/ports/UserInterface";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 import { UserDtoMapper } from "../mappers/UserDtoMapper";
-import { Role } from "../../domain/entities/enums/Role";
 
 export class UpdateUbicationUseCase {
     constructor(private userInterface: UserInterface) { }
-    async updatePlan(uuid: string, req: Request): Promise<BaseResponse> {
-        //TODO: si ya pago, esto queda como SERVICE_PROVIDER de cajon, si no, ya que haga el cambio
-        let role = UserDtoMapper.toUpdateRoleUserRequest(req);
-        if (!role) {
-            return new BaseResponse(null, 'Bad request or the role not exist', false, 400);
+    async execute(uuid: string, req: Request): Promise<BaseResponse> {
+        let ubication = UserDtoMapper.toUpdateUbicationUserRequest(req);
+        if (!ubication) {
+            return new BaseResponse(null, 'Bad request', false, 400);
         }
-        let result = await this.userInterface.update_role(uuid, Role[role.role]);
+        if (ubication.latitude == undefined || ubication.longitude == undefined) {
+            return new BaseResponse(null, 'Bad request', false, 400);
+        }
+        if (ubication.latitude < -90 || ubication.latitude > 90 || ubication.longitude < -180 || ubication.longitude > 180) {
+            return new BaseResponse(null, 'Bad request', false, 400);
+        }
+        let result = await this.userInterface.update_ubication(uuid, ubication.latitude, ubication.longitude);
         if (result) {
-            let response = UserDtoMapper.toUpdateRoleUserResponse(result);
-            return new BaseResponse(response, 'Role updated successfully', true, 201);
+            let response = UserDtoMapper.toUbicationUserResponse(result);
+            return new BaseResponse(response, 'Ubication updated successfully', true, 201);
         }
-        return new BaseResponse(null, 'Role not updated', false, 400);
+        return new BaseResponse(null, 'Ubication not updated', false, 400);
     }
 }

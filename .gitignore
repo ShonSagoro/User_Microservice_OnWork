@@ -4,3 +4,4 @@ credentials/
 public/
 dist/
 package-lock.json
+docker-compose-mysql.yml

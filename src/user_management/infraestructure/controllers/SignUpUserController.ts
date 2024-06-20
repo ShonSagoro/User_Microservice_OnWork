@@ -1,7 +1,6 @@
 import { BaseResponse } from './../../application/dtos/response/BaseResponse';
 import { EmailService } from '../../domain/services/EmailServices';
 import { Request, Response } from "express";
-import { EncryptService } from '../../domain/services/EncriptServices';
 import { SignUpUserUseCase } from '../../application/use_case/SignUpUserUseCase';
 
 export class SingUpUserController {

@@ -32,9 +32,8 @@ export class UserDaoMapper {
             region: user.contact.region,            
         })
     }
-
+    
     static toEntity(user: User): UserEntity {
-
         return UserEntity.build(
             {
                 uuid: user.uuid,

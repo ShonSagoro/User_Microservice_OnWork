@@ -6,7 +6,7 @@ import { Role } from "../../domain/entities/enums/Role";
 
 export class UpdateRoleUserUseCase {
     constructor(private userInterface: UserInterface) { }
-    async updatePlan(uuid: string, req: Request): Promise<BaseResponse> {
+    async execute(uuid: string, req: Request): Promise<BaseResponse> {
         //TODO: si ya pago, esto queda como SERVICE_PROVIDER de cajon, si no, ya que haga el cambio
         let role = UserDtoMapper.toUpdateRoleUserRequest(req);
         if (!role) {

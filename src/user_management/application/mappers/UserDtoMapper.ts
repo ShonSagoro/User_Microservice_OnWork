@@ -30,7 +30,6 @@ export class UserDtoMapper {
     static toSignUpUserRequest(req: Request): SignUpUserRequest | null {
         const body = req.body;
         if (!body.name || !body.lastName || !body.phoneNumber || !body.email|| !body.password || !body.birthday || !body.region) {
-            console.log(body);
             return null;
         }
         return new SignUpUserRequest(body.email, body.password, body.name, body.lastName, body.phoneNumber, body.birthday, body.region);
@@ -85,7 +84,7 @@ export class UserDtoMapper {
     }
 
     static toUserResponse(user: User): UserResponse {
-        return new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber);
+        return new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region);
     }
 
     static toPasswordUserResponse(user: User): PasswordUpdateResponse {
@@ -113,7 +112,7 @@ export class UserDtoMapper {
     }
 
     static toSingUpUserResponse(user: User):SingUpUserResponse  {
-        return new SingUpUserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.status.token);
+        return new SingUpUserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region ,user.status.token);
     }
 
     static toDomainUserSignUp(signUpUserRequest: SignUpUserRequest): User {
