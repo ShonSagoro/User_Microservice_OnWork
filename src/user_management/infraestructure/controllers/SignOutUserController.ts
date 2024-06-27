@@ -14,7 +14,6 @@ export class SignOutUserController {
         const { uuid } = req.params;
         const headers = req.headers as IncomingHttpHeaders;
         const authHeader = headers['authorization'];
-        console.log(authHeader);
 
         if (!authHeader) {
             const baseResponse = new BaseResponse("Error", "Token not provided", false, 401);

@@ -1,6 +1,6 @@
 import { Express } from "express";
 import dotenv from 'dotenv';
-import { activateUserController, deleteUserController, getByUuidController, listUsersController, signInProviderUserController, signInUserController, signOutUserController, signUpUserController, updatePasswordUserController, updatePlanUserController, updateProfileUserController, updateRoleUserController, updateUbicationController, updateUserController } from "../Dependencies";
+import { activateUserController, deleteUserController, getByUuidController, listUsersController, listUsersProvidersController, signInProviderUserController, signInUserController, signOutUserController, signUpUserController, signUpUserProviderController, updatePasswordUserController, updatePlanUserController, updateProfileUserController, updateRoleUserController, updateUbicationController, updateUserController } from "../Dependencies";
 dotenv.config();
 
 
@@ -22,4 +22,6 @@ export function setupUserEndpoints(app: Express) {
     app.put(`/role/:uuid`, updateRoleUserController.execute.bind(updateRoleUserController));
     app.put(`/ubication/:uuid`, updateUbicationController.execute.bind(updateUbicationController));
     app.put(`/:uuid`, updateUserController.execute.bind(updateUserController));
+    app.post(`/sign_up_provider`, signUpUserProviderController.execute.bind(signUpUserProviderController));
+    app.get(`/providers`, listUsersProvidersController.execute.bind(listUsersProvidersController));
 }

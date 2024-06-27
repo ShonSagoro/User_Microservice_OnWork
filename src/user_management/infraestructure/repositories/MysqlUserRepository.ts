@@ -13,6 +13,37 @@ export class MysqlUserRepository implements UserInterface {
 
     constructor(readonly encryptionService: EncryptService, readonly tokenServices: TokenServices) {
     }
+    async list_providers(transaction?: any): Promise<User[] | null> {
+        try {
+            const userEntities = await UserEntity.findAll({ 
+                where: {
+                    role: 'SERVICE_PROVIDER'
+                },
+                transaction 
+            });
+            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity));
+        } catch (error) {
+            console.error('Error listing users:', error);
+            return null;
+        }
+    }
+
+    async sign_up_provider(user: User): Promise<User | null> {
+        try {
+            user.credentials.password = await this.encryptionService.execute(user.credentials.password);
+            let userExists = await this.findByEmail(user.credentials.email);
+            if (userExists) return null;
+            return await this.withTransaction(async (transaction: any) => {
+                user.status.token = await this.tokenServices.generateToken();
+                const userEntity = UserDaoMapper.toEntity(user);
+                await userEntity.save({ transaction });
+                return user;
+            });
+        } catch (error) {
+            console.error('Error creating user:', error);
+            return null;
+        }
+    }
     
     async sing_in_provider(email: string, password: string): Promise<User | null> {
         try {
@@ -30,17 +61,6 @@ export class MysqlUserRepository implements UserInterface {
             return null;
         }    }
 
-    private async withTransaction(callback: (transaction: any) => Promise<any>): Promise<any> {
-        const transaction = await sequelize.transaction();
-        try {
-            const result = await callback(transaction);
-            await transaction.commit();
-            return result;
-        } catch (error) {
-            await transaction.rollback();
-            throw error;
-        }
-    }
 
     async findByEmail(email: string, transaction?: any): Promise<User | null> {
         try {
@@ -165,7 +185,6 @@ export class MysqlUserRepository implements UserInterface {
         try {
             let userExists = await this.findByUUID(uuid);
             if (!userExists) return null;
-            console.log('old_password:', old_password, 'new_password:', new_password, 'userExists.credentials.password:', userExists.credentials.password)
             if (!await this.encryptionService.compare(old_password, userExists.credentials.password)) return null;
             await this.withTransaction(async (transaction: any) => {
                 await UserEntity.update({ password: new_password}, { where: { uuid }, transaction });
@@ -236,5 +255,17 @@ export class MysqlUserRepository implements UserInterface {
             console.error('Error updating user plan:', error);
             return null;
         }    
+    }
+
+    private async withTransaction(callback: (transaction: any) => Promise<any>): Promise<any> {
+        const transaction = await sequelize.transaction();
+        try {
+            const result = await callback(transaction);
+            await transaction.commit();
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
     }
 }

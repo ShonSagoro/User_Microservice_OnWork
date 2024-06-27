@@ -9,8 +9,10 @@ export interface UserInterface {
     delete(uuid: string): Promise<boolean>;
     update(uuid:string, user: User): Promise<User | null>;
     list(): Promise<User[]|null>;
+    list_providers(): Promise<User[]|null>;
     update_user_verified_at(uuid: string, token:string):Promise<boolean>;
     sign_up(user: User): Promise<User | null>;
+    sign_up_provider(user: User): Promise<User | null>;
     sign_in (email:string, password:string):Promise<User|null>;
     sing_in_provider (email:string, password:string):Promise<User|null>;
     sign_out (uuid:string):Promise<boolean>; 

@@ -32,6 +32,10 @@ import { UpdatePlanUserController } from "./controllers/UpdatePlanUserController
 import { UpdateProfileUserController } from "./controllers/UpdateProfileUserController";
 import { UpdateRoleUserController } from "./controllers/UpdateRoleUserController";
 import { UpdateUbicationController } from "./controllers/UpdateUbicationController";
+import { ListUsersProvidersUseCase } from "../application/use_case/ListUsersProvidersUseCase";
+import { SignUpUserProviderUseCase } from "../application/use_case/SignUpUserProviderUseCase";
+import { ListUsersProvidersController } from "./controllers/ListUsersProvidersController";
+import { SignUpUserProvidersController } from "./controllers/SignUpUserProvidersController";
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
@@ -54,6 +58,8 @@ export const updatePlanUserUseCase = new UpdatePlanUserUseCase(databaseRepositor
 export const updateProfileUserUseCase = new UpdateProfileUserUseCase(databaseRepository);
 export const updateRoleUserUseCase = new UpdateRoleUserUseCase(databaseRepository);
 export const updateUbicationUseCase = new UpdateUbicationUseCase(databaseRepository);
+export const listUsersProviderCase = new ListUsersProvidersUseCase(databaseRepository);
+export const singUpUserProviderCase = new SignUpUserProviderUseCase(databaseRepository);
 
 export const signInUserController = new SignInUserController(singInUserCase);
 export const signUpUserController = new SingUpUserController(singUpUserCase, nodemailerEmailService);
@@ -70,3 +76,5 @@ export const updatePlanUserController = new UpdatePlanUserController(updatePlanU
 export const updateProfileUserController = new UpdateProfileUserController(updateProfileUserUseCase);
 export const updateRoleUserController = new UpdateRoleUserController(updateRoleUserUseCase);
 export const updateUbicationController = new UpdateUbicationController(updateUbicationUseCase);
+export const listUsersProvidersController = new ListUsersProvidersController(listUsersProviderCase);
+export const signUpUserProviderController = new SignUpUserProvidersController(singUpUserProviderCase, nodemailerEmailService);

@@ -24,6 +24,7 @@ import { UpdateRoleUserRequest } from '../dtos/request/UpdateRoleUserRequest';
 import { RoleUserUpdateResponse } from '../dtos/response/RoleUserUpdateResponse';
 import { SingUpUserResponse } from '../dtos/response/SingUpUserResponse';
 import { VerifiedUserRequest } from '../dtos/request/VerifiedUserRequest';
+import { UserProviderResponse } from '../dtos/response/UserProviderResponse';
 
 export class UserDtoMapper {
     
@@ -126,6 +127,17 @@ export class UserDtoMapper {
         return new User(contact, credentials, status, plan, role, ubication, profile);
     }
 
+    static toDomainUserProviderSignUp(signUpUserRequest: SignUpUserRequest): User {
+        let contact = new Contact(signUpUserRequest.name, signUpUserRequest.lastName, signUpUserRequest.phoneNumber, new Date(signUpUserRequest.birthday), signUpUserRequest.region);
+        let credentials = new Credentials(signUpUserRequest.email, signUpUserRequest.password);
+        let status = new Status("", new Date(), false);
+        let plan = Plan.FREE;
+        let role = Role.SERVICE_PROVIDER;
+        let ubication = new Ubication(0,0);
+        let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
+        return new User(contact, credentials, status, plan, role, ubication, profile);
+    }
+
     static toDomainUserUpdate(updateUserRequest: UpdateUserRequest): User {
         let contact = new Contact(updateUserRequest.name, updateUserRequest.lastName, updateUserRequest.phoneNumber, new Date(updateUserRequest.birthday), updateUserRequest.region);
         let credentials = new Credentials(updateUserRequest.email, "");
@@ -136,4 +148,8 @@ export class UserDtoMapper {
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
          return new User(contact, credentials, status, plan, role, ubication, profile);
     }
+
+    static toUserProviderResponse(user:User): UserProviderResponse{
+        return new UserProviderResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.profile.description, user.profile.company, user.ubication.latitude, user.ubication.longitude);
+    }   
 }

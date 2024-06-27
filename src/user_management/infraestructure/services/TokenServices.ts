@@ -1,11 +1,13 @@
 import { TokenServices } from '../../domain/services/TokenServices';
 
-
-export class TokenAuthServices implements TokenServices{
+export class TokenAuthServices implements TokenServices {
     constructor() {
     }
 
     async generateToken(): Promise<string> {
-        return (Math.floor(100000 + Math.random() * 900000)).toString();
+        const array = new Uint32Array(1);
+        crypto.getRandomValues(array);
+        const token = array[0] % 1000000;
+        return token.toString().padStart(6, '0');
     }
 }

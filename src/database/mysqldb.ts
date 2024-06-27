@@ -20,8 +20,8 @@ const sequelize = new Sequelize(process.env.DB_DATABASE || '', process.env.DB_US
 
 async function syncDatabase() {
     try {
-        await sequelize.sync({ force: false }); // Esto eliminará y volverá a crear todas las tablas
-        console.log('Database synchronized successfully.');
+        await sequelize.sync({ force: false });
+        signale.success('Database synchronized successfully.');
     } catch (error) {
         console.error('Unable to synchronize the database:', error);
     }
