@@ -1,4 +1,3 @@
-import { ListUsersUseCase } from '../../application/use_case/ListUsersUseCase';
 import { BaseResponse } from '../../application/dtos/response/BaseResponse';
 import { Request, Response } from "express";
 import { ListUsersProvidersUseCase } from '../../application/use_case/ListUsersProvidersUseCase';

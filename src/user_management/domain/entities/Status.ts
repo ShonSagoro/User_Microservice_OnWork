@@ -3,5 +3,6 @@ export class Status {
         public token: string,
         public verifiedAt: Date,
         public verified: boolean,
+        public isLoggin: boolean,
     ) {}
 }

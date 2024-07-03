@@ -13,6 +13,38 @@ export class MysqlUserRepository implements UserInterface {
 
     constructor(readonly encryptionService: EncryptService, readonly tokenServices: TokenServices) {
     }
+
+    async find_by_ubication(longitude: number, latitude: number): Promise<User[] | null> {
+        try {
+            const userEntities = await UserEntity.findAll({ 
+                where: {
+                    latitude,
+                    longitude
+                }
+            });
+            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity));
+        } catch (error) {
+            console.error('Error finding user by ubication:', error);
+            return null;
+        }
+    }
+
+    async find_by_tag_uuid(uuid: string): Promise<User[] | null> {
+        throw new Error("Method not implemented.");
+    }
+
+    async refresh_token(uuid: string): Promise<User|null> {
+        try{
+            let user = await this.findByUUID(uuid);
+            if (!user) return null;
+            if (!user.status.isLoggin) return null;
+            return user;
+
+        }catch(error){
+            console.error('Error refreshing token:', error);
+            return null;
+        }
+    }
     async list_providers(transaction?: any): Promise<User[] | null> {
         try {
             const userEntities = await UserEntity.findAll({ 
@@ -144,6 +176,8 @@ export class MysqlUserRepository implements UserInterface {
             return await this.withTransaction(async (transaction: any) => {
                 let user = await this.findByEmail(email, transaction);
                 if (!user) return null;
+                user.status.isLoggin = true;
+                await this.update(user.uuid, user, transaction);
                 if (await this.encryptionService.compare(password, user.credentials.password)) {
                     return user;
                 } else {

@@ -12,11 +12,7 @@ export class SingInProviderUserController {
             if (baseResponse.success) {
                 const uuid = baseResponse.data.uuid;
                 const token = await JWTMiddleware.GenerateToken({ uuid: uuid });
-                const tokens = {
-                    uuid: uuid,
-                    jwt_token: token,
-                }
-                baseResponse.data = tokens;
+                baseResponse.data.jwt_token = token;
                 baseResponse.apply(res);
             } 
             else {

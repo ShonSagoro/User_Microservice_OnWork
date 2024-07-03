@@ -1,4 +1,4 @@
-import { Plan } from './../../domain/entities/enums/Plan';
+ import { Plan } from './../../domain/entities/enums/Plan';
 import { Credentials } from './../../domain/entities/Credentials';
 import { Request } from 'express';
 import { SignUpUserRequest } from '../dtos/request/SignUpUserRequest';
@@ -84,8 +84,12 @@ export class UserDtoMapper {
         return new UpdateUbicationUserRequest(parseInt(body.latitude), parseInt(body.longitude));
     }
 
+    static toUbicationUserRequest(req: Request): UpdateUbicationUserRequest {
+        const body = req.body;
+        return new UpdateUbicationUserRequest(parseInt(body.latitude), parseInt(body.longitude));
+    }
     static toUserResponse(user: User): UserResponse {
-        return new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region);
+        return new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.plan, user.role, user.ubication.latitude, user.ubication.longitude, user.profile.description, user.profile.company);
     }
 
     static toPasswordUserResponse(user: User): PasswordUpdateResponse {
@@ -97,7 +101,8 @@ export class UserDtoMapper {
     }
 
     static toTokenUserReponse(user: User): TokenUserReponse {
-        return new TokenUserReponse(user.uuid);
+        let UserResponse = this.toUserResponse(user);
+        return new TokenUserReponse(user.uuid, UserResponse, "");
     }
 
     static toUbicationUserResponse(user: User): UbicationUserResponse {
@@ -119,7 +124,7 @@ export class UserDtoMapper {
     static toDomainUserSignUp(signUpUserRequest: SignUpUserRequest): User {
         let contact = new Contact(signUpUserRequest.name, signUpUserRequest.lastName, signUpUserRequest.phoneNumber, new Date(signUpUserRequest.birthday), signUpUserRequest.region);
         let credentials = new Credentials(signUpUserRequest.email, signUpUserRequest.password);
-        let status = new Status("", new Date(), false);
+        let status = new Status("", new Date(), false, false);
         let plan = Plan.FREE;
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);
@@ -130,18 +135,18 @@ export class UserDtoMapper {
     static toDomainUserProviderSignUp(signUpUserRequest: SignUpUserRequest): User {
         let contact = new Contact(signUpUserRequest.name, signUpUserRequest.lastName, signUpUserRequest.phoneNumber, new Date(signUpUserRequest.birthday), signUpUserRequest.region);
         let credentials = new Credentials(signUpUserRequest.email, signUpUserRequest.password);
-        let status = new Status("", new Date(), false);
+        let status = new Status("", new Date(), false, false);
         let plan = Plan.FREE;
         let role = Role.SERVICE_PROVIDER;
         let ubication = new Ubication(0,0);
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
         return new User(contact, credentials, status, plan, role, ubication, profile);
-    }
+    }  
 
     static toDomainUserUpdate(updateUserRequest: UpdateUserRequest): User {
         let contact = new Contact(updateUserRequest.name, updateUserRequest.lastName, updateUserRequest.phoneNumber, new Date(updateUserRequest.birthday), updateUserRequest.region);
         let credentials = new Credentials(updateUserRequest.email, "");
-        let status = new Status("", new Date, false);
+        let status = new Status("", new Date, false, false);
         let plan = Plan.FREE;
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);

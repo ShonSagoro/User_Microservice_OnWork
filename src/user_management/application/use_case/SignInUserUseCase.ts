@@ -14,9 +14,9 @@ export class SignInUserUseCase {
         }
         let result: User | null = await this.userInterface.sign_in(singInUserRequest.email, singInUserRequest.password);
         if (result) {
-            // if (!result.status.verified) {
-            //     return new BaseResponse(null, 'User has not been verified', false, 400);
-            // }
+            if (!result.status.verified) {
+                return new BaseResponse(null, 'User has not been verified', false, 400);
+            }
             let response = UserDtoMapper.toTokenUserReponse(result);
             return new BaseResponse(response, 'User signed in successfully', true, 200);
         }

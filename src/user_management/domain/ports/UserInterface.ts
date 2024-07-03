@@ -1,6 +1,4 @@
-import { EncryptService } from "../services/EncriptServices";
 import { User } from "../entities/User";
-import { TokenServices } from "../services/TokenServices";
 import { Profile } from "../entities/Profile";
 
 export interface UserInterface {
@@ -21,4 +19,7 @@ export interface UserInterface {
     update_plan(uuid:string, plan:string):Promise<User|null>; //Plan with logic of payment
     update_profile(uuid:string, profile: Profile):Promise<User|null>; //direct
     update_ubication(uuid:string, longitude:number, latitude:number):Promise<User|null>; //direct
+    find_by_ubication(longitude:number, latitude:number):Promise<User[]|null>; //direct
+    find_by_tag_uuid(uuid:string):Promise<User[]|null>; //direct
+    refresh_token(uuid:string):Promise<User|null>;
 }

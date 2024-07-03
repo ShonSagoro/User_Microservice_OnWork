@@ -1,6 +1,6 @@
 import { Express } from "express";
 import dotenv from 'dotenv';
-import { activateUserController, deleteUserController, getByUuidController, listUsersController, listUsersProvidersController, signInProviderUserController, signInUserController, signOutUserController, signUpUserController, signUpUserProviderController, updatePasswordUserController, updatePlanUserController, updateProfileUserController, updateRoleUserController, updateUbicationController, updateUserController } from "../Dependencies";
+import { activateUserController, deleteUserController, getByTagUuidController, getByUbicationController, getByUuidController, listUsersController, listUsersProvidersController, refreshTokenUserController, signInProviderUserController, signInUserController, signOutUserController, signUpUserController, signUpUserProviderController, updatePasswordUserController, updatePlanUserController, updateProfileUserController, updateRoleUserController, updateUbicationController, updateUserController } from "../Dependencies";
 dotenv.config();
 
 
@@ -11,6 +11,10 @@ export function setupUserEndpoints(app: Express) {
     app.get(`/:uuid`, getByUuidController.execute.bind(getByUuidController));
     app.get(`/`, listUsersController.execute.bind(listUsersController));
     app.get(`/sign_out/:uuid`, signOutUserController.execute.bind(signOutUserController));
+    app.get(`/providers`, listUsersProvidersController.execute.bind(listUsersProvidersController));
+    app.get(`/refresh/:uuid`, refreshTokenUserController.execute.bind(refreshTokenUserController));
+    app.get(`/tag/users/:uuid`, getByTagUuidController.execute.bind(getByTagUuidController));
+    app.post(`/ubication/:uuid`, getByUbicationController.execute.bind(getByUbicationController));
     app.post(`/sign_up`, signUpUserController.execute.bind(signUpUserController));
     app.post(`/sign_in`, signInUserController.execute.bind(signInUserController));
     app.post(`/sign_in_provider`, signInProviderUserController.execute.bind(signInProviderUserController));
@@ -23,5 +27,4 @@ export function setupUserEndpoints(app: Express) {
     app.put(`/ubication/:uuid`, updateUbicationController.execute.bind(updateUbicationController));
     app.put(`/:uuid`, updateUserController.execute.bind(updateUserController));
     app.post(`/sign_up_provider`, signUpUserProviderController.execute.bind(signUpUserProviderController));
-    app.get(`/providers`, listUsersProvidersController.execute.bind(listUsersProvidersController));
 }

@@ -1,13 +1,20 @@
 export class UserResponse {
     uuid: string;
-    name: string;
     email: string;
+    name: string;
     lastName: string;
     phoneNumber: string;
     birthday: string; //YYYY-MM-DD
     region: string;
+    plan: string;
+    role: string;
+    latitude: number;
+    longitude: number;
+    description: string;
+    company: string;
 
-    constructor(uuid: string, name: string, email: string, lastName: string, phoneNumber: string, birthday:string, region:string) {
+
+    constructor(uuid: string, name: string, email: string, lastName: string, phoneNumber: string, birthday:string, region:string, plan: string, role: string, latitude: number, longitude: number, description: string, company: string) {
         this.uuid = uuid;
         this.name = name;
         this.email = email;
@@ -15,5 +22,11 @@ export class UserResponse {
         this.phoneNumber = phoneNumber;
         this.birthday = birthday;
         this.region = region;
+        this.plan = plan;
+        this.role = role;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.description = description;
+        this.company = company;
     }
 }

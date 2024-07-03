@@ -36,6 +36,13 @@ import { ListUsersProvidersUseCase } from "../application/use_case/ListUsersProv
 import { SignUpUserProviderUseCase } from "../application/use_case/SignUpUserProviderUseCase";
 import { ListUsersProvidersController } from "./controllers/ListUsersProvidersController";
 import { SignUpUserProvidersController } from "./controllers/SignUpUserProvidersController";
+import { RefreshUserUseCase } from "../application/use_case/RefreshUserUseCase";
+import exp from "constants";
+import { RefreshTokenUserController } from "./controllers/RefreshTokenUserController";
+import { GetByTagUserUseCase } from "../application/use_case/GetByTagUserUseCase";
+import GetUserByTagUuidController from "./controllers/GetUserByTagUuidController";
+import { GetByUbicationUserUseCase } from "../application/use_case/GetByUbicationUserUseCase";
+import GetUserByUbicationController from "./controllers/GetUserByUbicationController";
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
@@ -60,6 +67,9 @@ export const updateRoleUserUseCase = new UpdateRoleUserUseCase(databaseRepositor
 export const updateUbicationUseCase = new UpdateUbicationUseCase(databaseRepository);
 export const listUsersProviderCase = new ListUsersProvidersUseCase(databaseRepository);
 export const singUpUserProviderCase = new SignUpUserProviderUseCase(databaseRepository);
+export const refreshTokenUseCase = new RefreshUserUseCase(databaseRepository);
+export const getByTagUseCase = new GetByTagUserUseCase(databaseRepository);
+export const getByUbicationUseCase = new GetByUbicationUserUseCase(databaseRepository);
 
 export const signInUserController = new SignInUserController(singInUserCase);
 export const signUpUserController = new SingUpUserController(singUpUserCase, nodemailerEmailService);
@@ -78,3 +88,6 @@ export const updateRoleUserController = new UpdateRoleUserController(updateRoleU
 export const updateUbicationController = new UpdateUbicationController(updateUbicationUseCase);
 export const listUsersProvidersController = new ListUsersProvidersController(listUsersProviderCase);
 export const signUpUserProviderController = new SignUpUserProvidersController(singUpUserProviderCase, nodemailerEmailService);
+export const refreshTokenUserController = new RefreshTokenUserController(refreshTokenUseCase);
+export const getByTagUuidController = new GetUserByTagUuidController(getByTagUseCase);
+export const getByUbicationController = new GetUserByUbicationController(getByUbicationUseCase);

@@ -2,7 +2,6 @@ import { UserInterface } from "../../domain/ports/UserInterface";
 import { Request } from "express";
 import { UserDtoMapper } from "../mappers/UserDtoMapper";
 import { BaseResponse } from "../dtos/response/BaseResponse";
-import { TokenServices } from "../../domain/services/TokenServices";
 
 export class SignUpUserProviderUseCase {
     constructor(readonly userInterface: UserInterface) {}
