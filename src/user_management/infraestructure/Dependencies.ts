@@ -1,3 +1,5 @@
+import { UpdateTagUseCase } from './../application/use_case/UpdateTagUseCase';
+import { DeleteTagUseCase } from './../application/use_case/DeleteTagUseCase';
 import { DeleteUserUseCase } from "../application/use_case/DeleteUserUseCase";
 import { ActivateUserUseCase } from "../application/use_case/ActivateUserUseCase";
 import { GetByUserUseCase } from "../application/use_case/GetByUserUseCase";
@@ -43,6 +45,14 @@ import { GetByTagUserUseCase } from "../application/use_case/GetByTagUserUseCase
 import GetUserByTagUuidController from "./controllers/GetUserByTagUuidController";
 import { GetByUbicationUserUseCase } from "../application/use_case/GetByUbicationUserUseCase";
 import GetUserByUbicationController from "./controllers/GetUserByUbicationController";
+import { MysqlTagRepository } from "./repositories/MysqlTagRepository";
+import { CreateTagUseCases } from "../application/use_case/CreateTagUseCases";
+import { ListTagUseCase } from "../application/use_case/ListTagUseCase";
+import { GetByUuidTagUseCase } from "../application/use_case/GetByUuidTagUseCase";
+import { UpdateTagController } from './controllers/UpdateTagController';
+import { GetByUuidTagController } from './controllers/GetByUuidTagController';
+import { ListTagController } from './controllers/ListTagController';
+import { CreateTagController } from './controllers/CreateTagController';
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
@@ -50,6 +60,7 @@ export const tokenServices = new TokenAuthServices();
 export const userSaga = new UserSagaImpl();
 
 export const databaseRepository = new MysqlUserRepository(encriptServices, tokenServices);
+export const databaseRepositoryTag = new MysqlTagRepository();
 
 export const singUpUserCase = new SignUpUserUseCase(databaseRepository);
 export const getUserUseCase = new GetByUserUseCase(databaseRepository);
@@ -91,3 +102,15 @@ export const signUpUserProviderController = new SignUpUserProvidersController(si
 export const refreshTokenUserController = new RefreshTokenUserController(refreshTokenUseCase);
 export const getByTagUuidController = new GetUserByTagUuidController(getByTagUseCase);
 export const getByUbicationController = new GetUserByUbicationController(getByUbicationUseCase);
+
+export const createTagUseCase = new CreateTagUseCases(databaseRepositoryTag);
+export const listTagUseCase = new ListTagUseCase(databaseRepositoryTag);
+export const getByUuidTagUseCase = new GetByUuidTagUseCase(databaseRepositoryTag);
+export const deleteTagUseCase = new DeleteTagUseCase(databaseRepositoryTag);
+export const updateTagUseCase = new UpdateTagUseCase(databaseRepositoryTag);
+
+export const createTagController = new CreateTagController(createTagUseCase);
+export const listTagController = new ListTagController(listTagUseCase);
+export const getByUuidTagController = new GetByUuidTagController(getByUuidTagUseCase);
+export const deleteTagController = new UpdateTagController(deleteTagUseCase);
+export const updateTagController = new UpdateTagController(updateTagUseCase);

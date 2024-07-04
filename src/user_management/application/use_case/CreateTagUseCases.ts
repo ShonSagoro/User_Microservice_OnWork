@@ -1,10 +1,10 @@
 import { Request } from "express";
-import { BaseResponse } from "../dtos/response/BaseResponse";
 import { TagInterface } from "../../domain/ports/TagInterface";
 import { TagDtoMapper } from "../mappers/TagDtoMapper";
 import { Tag } from "../../domain/entities/Tag";
+import { BaseResponse } from "../dtos/response/BaseResponse";
 
-export class SignInUserUseCase {
+export class CreateTagUseCases {
     constructor(readonly repostory: TagInterface) {}
 
     async execute(req: Request): Promise<BaseResponse> {

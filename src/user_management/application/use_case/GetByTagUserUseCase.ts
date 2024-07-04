@@ -12,6 +12,6 @@ export class GetByTagUserUseCase {
             let responses = result.map((user: User) => UserDtoMapper.toUserResponse(user));
             return new BaseResponse(responses, 'Users by tag has been find successfully', true, 200);
         }
-        return new BaseResponse(null, 'User by tag has been find not found', false, 404);
+        return new BaseResponse(null, 'User find not found', false, 404);
     }
 }

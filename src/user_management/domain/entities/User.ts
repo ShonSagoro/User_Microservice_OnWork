@@ -7,6 +7,7 @@ import { Credentials } from './Credentials';
 import { Plan } from './enums/Plan';
 import { Role } from './enums/Role';
 import { Profile } from './Profile';
+import { Tag } from './Tag';
 
 
 
@@ -28,8 +29,10 @@ export class User implements ValidatableEntity {
     
     public profile: Profile;
 
+    public tags: Tag[];
 
-    constructor(contact: Contact, credentials: Credentials, status: Status, plan: Plan, role: Role, ubication: Ubication, profile: Profile) {
+
+    constructor(contact: Contact, credentials: Credentials, status: Status, plan: Plan, role: Role, ubication: Ubication, profile: Profile, tags: Tag[] = []) {
         this.uuid = uuidv4();
         this.contact=contact
         this.credentials=credentials
@@ -38,6 +41,7 @@ export class User implements ValidatableEntity {
         this.role=role
         this.ubication=ubication
         this.profile=profile
+        this.tags=tags
     }
 
     async validate() {

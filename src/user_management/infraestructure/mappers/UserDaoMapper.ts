@@ -15,7 +15,7 @@ export class UserDaoMapper {
         let ubication = new Ubication(userEntity.dataValues.latitude, userEntity.dataValues.longitude);
         let profile = new Profile(userEntity.dataValues.description, userEntity.dataValues.company);
         let credentials = new Credentials(userEntity.dataValues.email, userEntity.dataValues.password);
-        let status = new Status(userEntity.dataValues.token,userEntity.dataValues.verifiedAt, userEntity.dataValues.verified);
+        let status = new Status(userEntity.dataValues.token,userEntity.dataValues.verifiedAt, userEntity.dataValues.verified, userEntity.dataValues.isLogging);
         let user = new User(contact, credentials, status, plan, role, ubication, profile);
         user.uuid = userEntity.dataValues.uuid;
         return user;
@@ -52,6 +52,7 @@ export class UserDaoMapper {
                 longitude: user.ubication.longitude,
                 description: user.profile.description,
                 company: user.profile.company,
+                isLogging: user.status.isLoggin,
                 verified: user.status.verified
             }
         );
