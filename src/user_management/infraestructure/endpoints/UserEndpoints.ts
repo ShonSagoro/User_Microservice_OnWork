@@ -1,7 +1,5 @@
 import { Express } from "express";
-import dotenv from 'dotenv';
 import { activateUserController, deleteUserController, getByTagUuidController, getByUbicationController, getByUuidController, listUsersController, listUsersProvidersController, refreshTokenUserController, signInProviderUserController, signInUserController, signOutUserController, signUpUserController, signUpUserProviderController, updatePasswordUserController, updatePlanUserController, updateProfileUserController, updateRoleUserController, updateUbicationController, updateUserController } from "../Dependencies";
-dotenv.config();
 let model = "users";
 
 export function setupUserEndpoints(app: Express) {

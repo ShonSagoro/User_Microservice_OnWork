@@ -1,5 +1,3 @@
-// MysqlUserRepository.ts
-
 import { UserInterface } from "../../domain/ports/UserInterface";
 import { User } from "../../domain/entities/User";
 import UserEntity from '../daos/UserEntity';
@@ -8,8 +6,18 @@ import { TokenServices } from "../../domain/services/TokenServices";
 import { UserDaoMapper } from '../mappers/UserDaoMapper';
 import sequelize from "../../../database/mysqldb";
 import { Profile } from "../../domain/entities/Profile";
+import { UserTag } from "../../domain/entities/UserTag";
+import { MysqlUserTagRepository } from "./MysqlUserTagRepository";
 
 export class MysqlUserRepository implements UserInterface {
+    private _userTagRepository: MysqlUserTagRepository | null = null;
+
+    get userTagRepository(): MysqlUserTagRepository {
+        if (!this._userTagRepository) {
+            this._userTagRepository = new MysqlUserTagRepository();
+        }
+        return this._userTagRepository;
+    }
 
     constructor(readonly encryptionService: EncryptService, readonly tokenServices: TokenServices) {
     }
@@ -30,7 +38,16 @@ export class MysqlUserRepository implements UserInterface {
     }
 
     async find_by_tag_uuid(uuid: string): Promise<User[] | null> {
-        throw new Error("Method not implemented.");
+        try {
+            const userTags: UserTag[] | null = await this.userTagRepository.findByUuidTag(uuid);
+            if (!userTags) return null;
+            const users = userTags.map((userTag: UserTag) => userTag.userid);
+            const userEntities = await UserEntity.findAll({ where: { uuid: users } });
+            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity)); 
+        } catch (error) {
+            console.error('Error finding by tag UUID:', error);
+            return null;
+        }
     }
 
     async refresh_token(uuid: string): Promise<User|null> {

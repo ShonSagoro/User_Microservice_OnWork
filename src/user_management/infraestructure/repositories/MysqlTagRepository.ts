@@ -1,20 +1,36 @@
-// MysqlUserRepository.ts
 
-import { UserInterface } from "../../domain/ports/UserInterface";
-import { User } from "../../domain/entities/User";
-import UserEntity from '../daos/UserEntity';
-import { EncryptService } from "../../domain/services/EncriptServices";
-import { TokenServices } from "../../domain/services/TokenServices";
-import { UserDaoMapper } from '../mappers/UserDaoMapper';
 import sequelize from "../../../database/mysqldb";
-import { Profile } from "../../domain/entities/Profile";
 import { TagInterface } from "../../domain/ports/TagInterface";
 import { Tag } from "../../domain/entities/Tag";
 import TagEntity from "../daos/TagEntity";
 import { TagDaoMapper } from "../mappers/TagDaoMapper";
+import { MysqlUserTagRepository } from "./MysqlUserTagRepository";
+import { UserTag } from "../../domain/entities/UserTag";
 
 export class MysqlTagRepository implements TagInterface {
-    
+
+    private _userTagRepository: MysqlUserTagRepository | null = null;
+
+    get userTagRepository(): MysqlUserTagRepository {
+        if (!this._userTagRepository) {
+            this._userTagRepository = new MysqlUserTagRepository();
+        }
+        return this._userTagRepository;
+    }
+
+    async findByUserUUID(uuid: string): Promise<Tag[] | null> {
+        try{
+            const userTags: UserTag[] | null = await this.userTagRepository.findByUuidUser(uuid);
+            if(!userTags) return null;
+            const tags = userTags.map((userTag: UserTag) => userTag.tagid);
+            const tagEntities = await TagEntity.findAll({ where: { uuid: tags } });
+            return tagEntities.map(tagEntity => TagDaoMapper.toDomain(tagEntity));
+        }catch(error){
+            console.error('Error finding by user UUID:', error);
+            return null;
+        }
+        throw new Error("Method not implemented.");
+    }
     
     async create(tag: Tag): Promise<Tag | null> {
         try {
@@ -31,7 +47,7 @@ export class MysqlTagRepository implements TagInterface {
 
     async delete(uuid: string, transaction?: any): Promise<boolean> {
         try {
-            await UserEntity.destroy({ where: { uuid }, transaction });
+            await TagEntity.destroy({ where: { uuid }, transaction });
             return true;
         } catch (error) {
             console.error('Error deleting tag:', error);
@@ -77,7 +93,6 @@ export class MysqlTagRepository implements TagInterface {
             return null;
         }
     }
-
 
     private async withTransaction(callback: (transaction: any) => Promise<any>): Promise<any> {
         const transaction = await sequelize.transaction();
