@@ -1,11 +1,3 @@
-import { User } from './../../domain/entities/User';
-import { Contact } from './../../domain/entities/Contact';
-import UserEntity from "../daos/UserEntity";
-import { Credentials } from '../../domain/entities/Credentials';
-import { Status } from '../../domain/entities/Status';
-import { Plan } from '../../domain/entities/enums/Plan';
-import { Ubication } from '../../domain/entities/Ubication';
-import { Profile } from '../../domain/entities/Profile';
 import TagEntity from '../daos/TagEntity';
 import { Tag } from '../../domain/entities/Tag';
 

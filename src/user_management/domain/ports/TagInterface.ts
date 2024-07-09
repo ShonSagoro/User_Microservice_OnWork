@@ -6,5 +6,5 @@ export interface TagInterface {
     delete(uuid: string): Promise<boolean>;
     list(): Promise<Tag[]|null>;
     findByUUID(uuid: string): Promise<Tag|null>;
-    findByUserUUID(uuid: string): Promise<Tag[]|null>;
+    findByUserUUID(uuid: string): Promise<Tag[]>;
 }

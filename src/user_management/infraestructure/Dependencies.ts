@@ -53,6 +53,8 @@ import { UpdateTagController } from './controllers/UpdateTagController';
 import { GetByUuidTagController } from './controllers/GetByUuidTagController';
 import { ListTagController } from './controllers/ListTagController';
 import { CreateTagController } from './controllers/CreateTagController';
+import { MysqlUserTagRepository } from './repositories/MysqlUserTagRepository';
+import { CreateUserTagUseCases } from '../application/use_case/CreateUserTagUseCase';
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
@@ -61,6 +63,7 @@ export const userSaga = new UserSagaImpl();
 
 export const databaseRepository = new MysqlUserRepository(encriptServices, tokenServices);
 export const databaseRepositoryTag = new MysqlTagRepository();
+export const databaseRepositoryTagUser = new MysqlUserTagRepository();
 
 export const singUpUserCase = new SignUpUserUseCase(databaseRepository);
 export const getUserUseCase = new GetByUserUseCase(databaseRepository);
@@ -114,3 +117,5 @@ export const listTagController = new ListTagController(listTagUseCase);
 export const getByUuidTagController = new GetByUuidTagController(getByUuidTagUseCase);
 export const deleteTagController = new UpdateTagController(deleteTagUseCase);
 export const updateTagController = new UpdateTagController(updateTagUseCase);
+
+export const createUserTagUseCases = new CreateUserTagUseCases(databaseRepositoryTagUser);

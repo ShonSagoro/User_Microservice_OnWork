@@ -32,7 +32,7 @@ export class User implements ValidatableEntity {
     public tags: Tag[];
 
 
-    constructor(contact: Contact, credentials: Credentials, status: Status, plan: Plan, role: Role, ubication: Ubication, profile: Profile, tags: Tag[] = []) {
+    constructor(contact: Contact, credentials: Credentials, status: Status, plan: Plan, role: Role, ubication: Ubication, profile: Profile, tags: Tag[]) {
         this.uuid = uuidv4();
         this.contact=contact
         this.credentials=credentials

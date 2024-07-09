@@ -6,17 +6,51 @@ import { Status } from '../../domain/entities/Status';
 import { Plan } from '../../domain/entities/enums/Plan';
 import { Ubication } from '../../domain/entities/Ubication';
 import { Profile } from '../../domain/entities/Profile';
+import { Tag } from '../../domain/entities/Tag';
 
 export class UserDaoMapper {
-    static toDomain(userEntity: UserEntity): User{
-        let contact = new Contact(userEntity.dataValues.name, userEntity.dataValues.lastName, userEntity.dataValues.phoneNumber, userEntity.dataValues.birthday, userEntity.dataValues.region);
-        let plan = userEntity.dataValues.plan;
-        let role = userEntity.dataValues.role;
-        let ubication = new Ubication(userEntity.dataValues.latitude, userEntity.dataValues.longitude);
-        let profile = new Profile(userEntity.dataValues.description, userEntity.dataValues.company);
-        let credentials = new Credentials(userEntity.dataValues.email, userEntity.dataValues.password);
-        let status = new Status(userEntity.dataValues.token,userEntity.dataValues.verifiedAt, userEntity.dataValues.verified, userEntity.dataValues.isLogging);
-        let user = new User(contact, credentials, status, plan, role, ubication, profile);
+    static toDomain(userEntity: UserEntity): User {
+        const contact = new Contact(
+            userEntity.dataValues.name,
+            userEntity.dataValues.lastName,
+            userEntity.dataValues.phoneNumber,
+            userEntity.dataValues.birthday,
+            userEntity.dataValues.region
+        );
+        const plan = userEntity.dataValues.plan;
+        const role = userEntity.dataValues.role;
+        const ubication = new Ubication(
+            userEntity.dataValues.latitude,
+            userEntity.dataValues.longitude
+        );
+        const profile = new Profile(
+            userEntity.dataValues.description,
+            userEntity.dataValues.company
+        );
+        const credentials = new Credentials(
+            userEntity.dataValues.email,
+            userEntity.dataValues.password
+        );
+        const status = new Status(
+            userEntity.dataValues.token,
+            userEntity.dataValues.verifiedAt,
+            userEntity.dataValues.verified,
+            userEntity.dataValues.isLogging
+        );
+
+        const tags: Tag[] = userEntity.dataValues.tags || [];
+
+        const user = new User(
+            contact,
+            credentials,
+            status,
+            plan,
+            role,
+            ubication,
+            profile,
+            tags
+        );
+        
         user.uuid = userEntity.dataValues.uuid;
         return user;
     }

@@ -1,13 +1,10 @@
 import { Request } from "express";
-import { TagInterface } from "../../domain/ports/TagInterface";
-import { TagDtoMapper } from "../mappers/TagDtoMapper";
-import { Tag } from "../../domain/entities/Tag";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 import { UserTagInterface } from "../../domain/ports/UserTagInterface";
 import { UserTagDtoMapper } from "../mappers/UserTagDtoMapper";
 import { UserTag } from "../../domain/entities/UserTag";
 
-export class CreateTagUseCases {
+export class CreateUserTagUseCases {
     constructor(readonly repostory: UserTagInterface) {}
 
     async execute(req: Request): Promise<BaseResponse> {

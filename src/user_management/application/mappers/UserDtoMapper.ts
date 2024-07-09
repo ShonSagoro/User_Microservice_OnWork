@@ -1,3 +1,4 @@
+import { TagResponse } from './../dtos/response/TagResponse';
  import { Plan } from './../../domain/entities/enums/Plan';
 import { Credentials } from './../../domain/entities/Credentials';
 import { Request } from 'express';
@@ -25,6 +26,9 @@ import { RoleUserUpdateResponse } from '../dtos/response/RoleUserUpdateResponse'
 import { SingUpUserResponse } from '../dtos/response/SingUpUserResponse';
 import { VerifiedUserRequest } from '../dtos/request/VerifiedUserRequest';
 import { UserProviderResponse } from '../dtos/response/UserProviderResponse';
+import { TagDaoMapper } from '../../infraestructure/mappers/TagDaoMapper';
+import { Tag } from '../../domain/entities/Tag';
+import { TagDtoMapper } from './TagDtoMapper';
 
 export class UserDtoMapper {
     
@@ -89,7 +93,9 @@ export class UserDtoMapper {
         return new UpdateUbicationUserRequest(parseInt(body.latitude), parseInt(body.longitude));
     }
     static toUserResponse(user: User): UserResponse {
-        return new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.plan, user.role, user.ubication.latitude, user.ubication.longitude, user.profile.description, user.profile.company);
+        let response = new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.plan, user.role, user.ubication.latitude, user.ubication.longitude, user.profile.description, user.profile.company);
+        response.tags = user.tags.map((tag) => TagDtoMapper.toTagResponse(tag));
+        return response;
     }
 
     static toPasswordUserResponse(user: User): PasswordUpdateResponse {
@@ -129,7 +135,7 @@ export class UserDtoMapper {
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
-        return new User(contact, credentials, status, plan, role, ubication, profile);
+        return new User(contact, credentials, status, plan, role, ubication, profile, []);
     }
 
     static toDomainUserProviderSignUp(signUpUserRequest: SignUpUserRequest): User {
@@ -140,7 +146,7 @@ export class UserDtoMapper {
         let role = Role.SERVICE_PROVIDER;
         let ubication = new Ubication(0,0);
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
-        return new User(contact, credentials, status, plan, role, ubication, profile);
+        return new User(contact, credentials, status, plan, role, ubication, profile, []);
     }  
 
     static toDomainUserUpdate(updateUserRequest: UpdateUserRequest): User {
@@ -151,10 +157,12 @@ export class UserDtoMapper {
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
-         return new User(contact, credentials, status, plan, role, ubication, profile);
+         return new User(contact, credentials, status, plan, role, ubication, profile, []);
     }
 
     static toUserProviderResponse(user:User): UserProviderResponse{
-        return new UserProviderResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.profile.description, user.profile.company, user.ubication.latitude, user.ubication.longitude);
+        let userResponse = this.toUserResponse(user);
+        let userProviderResponse = new UserProviderResponse(userResponse.uuid, userResponse.name, userResponse.email, userResponse.lastName, userResponse.phoneNumber, userResponse.birthday, userResponse.region, userResponse.plan, userResponse.role, userResponse.latitude, userResponse.longitude, userResponse.description, userResponse.company, userResponse.tags);
+        return userProviderResponse;
     }   
 }

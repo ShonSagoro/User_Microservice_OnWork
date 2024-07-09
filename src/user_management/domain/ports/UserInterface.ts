@@ -1,5 +1,6 @@
 import { User } from "../entities/User";
 import { Profile } from "../entities/Profile";
+import { Tag } from "../entities/Tag";
 
 export interface UserInterface {
     findByEmail(email: string): Promise<User | null>;
@@ -22,4 +23,5 @@ export interface UserInterface {
     find_by_ubication(longitude:number, latitude:number):Promise<User[]|null>; //direct
     find_by_tag_uuid(uuid:string):Promise<User[]|null>; //direct
     refresh_token(uuid:string):Promise<User|null>;
+    find_all_tags_by_user_uuid(uuid:string):Promise<Tag[]|null>;
 }

@@ -1,3 +1,6 @@
+import { Tag } from "../../../domain/entities/Tag";
+import { TagResponse } from "./TagResponse";
+
 export class UserResponse {
     uuid: string;
     email: string;
@@ -12,6 +15,7 @@ export class UserResponse {
     longitude: number;
     description: string;
     company: string;
+    tags: TagResponse[] = [];
 
 
     constructor(uuid: string, name: string, email: string, lastName: string, phoneNumber: string, birthday:string, region:string, plan: string, role: string, latitude: number, longitude: number, description: string, company: string) {

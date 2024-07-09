@@ -8,9 +8,13 @@ import sequelize from "../../../database/mysqldb";
 import { Profile } from "../../domain/entities/Profile";
 import { UserTag } from "../../domain/entities/UserTag";
 import { MysqlUserTagRepository } from "./MysqlUserTagRepository";
+import { MysqlTagRepository } from "./MysqlTagRepository";
+import { Tag } from "../../domain/entities/Tag";
+import TagEntity from "../daos/TagEntity";
 
 export class MysqlUserRepository implements UserInterface {
     private _userTagRepository: MysqlUserTagRepository | null = null;
+    private _tagRepository: MysqlTagRepository | null = null;
 
     get userTagRepository(): MysqlUserTagRepository {
         if (!this._userTagRepository) {
@@ -19,20 +23,38 @@ export class MysqlUserRepository implements UserInterface {
         return this._userTagRepository;
     }
 
+    get tagRepository(): MysqlTagRepository {
+        if (!this._tagRepository) {
+            this._tagRepository = new MysqlTagRepository();
+        }
+        return this._tagRepository;
+    }
+
     constructor(readonly encryptionService: EncryptService, readonly tokenServices: TokenServices) {
+    }
+
+    async find_all_tags_by_user_uuid(uuid: string): Promise<Tag[] | null> {
+        try{
+            return await this.tagRepository.findByUserUUID(uuid);
+        }catch(error){
+            console.error('Error finding all tags by user UUID:', error);
+            return null;
+        }
     }
 
     async find_by_ubication(longitude: number, latitude: number): Promise<User[] | null> {
         try {
-            const userEntities = await UserEntity.findAll({ 
+            const userEntities = await UserEntity.findAll({
                 where: {
                     latitude,
                     longitude
-                }
+                },
+                include: [{ model: TagEntity, as: 'tags' }]
             });
+    
             return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity));
         } catch (error) {
-            console.error('Error finding user by ubication:', error);
+            console.error('Error finding user by location:', error);
             return null;
         }
     }
@@ -124,8 +146,10 @@ export class MysqlUserRepository implements UserInterface {
 
     async findByUUID(uuid: string, transaction?: any): Promise<User | null> {
         try {
-            return await UserEntity.findByPk(uuid, { transaction })
-                .then(userEntity => userEntity ? UserDaoMapper.toDomain(userEntity) : null);
+            return await UserEntity.findByPk(uuid, {            
+                include: [{ model: TagEntity, as: 'tags' }], 
+                transaction 
+            }).then(userEntity => userEntity ? UserDaoMapper.toDomain(userEntity) : null);
         } catch (error) {
             console.error('Error finding user by UUID:', error);
             return null;
@@ -134,6 +158,7 @@ export class MysqlUserRepository implements UserInterface {
 
     async delete(uuid: string, transaction?: any): Promise<boolean> {
         try {
+            await this.userTagRepository.deleteByUuidUser(uuid);
             await UserEntity.destroy({ where: { uuid }, transaction });
             return true;
         } catch (error) {
@@ -148,22 +173,28 @@ export class MysqlUserRepository implements UserInterface {
             if (!existingUser) return null;
     
             const updateData: Partial<UserEntity> = UserDaoMapper.toUpdateEntity(user, uuid);
-            return await this.withTransaction(async (transaction: any) => {
-                await UserEntity.update(updateData, { where: { uuid }, transaction });
-                return await this.withTransaction(async (transaction: any) => { 
-                    await UserEntity.update(updateData, { where: { uuid }, transaction }); 
-                    return user; 
+            
+            await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update(updateData, { 
+                    where: { uuid },
+                    transaction 
                 });
             });
+    
+            return await this.findByUUID(uuid, transaction);
         } catch (error) {
             console.error('Error updating user:', error);
             return null;
         }
     }
+    
 
     async list(transaction?: any): Promise<User[] | null> {
         try {
-            const userEntities = await UserEntity.findAll({ transaction });
+            const userEntities = await UserEntity.findAll({ 
+                transaction,
+                include: [{ model: TagEntity, as: 'tags' }], 
+            });
             return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity));
         } catch (error) {
             console.error('Error listing users:', error);
@@ -210,6 +241,7 @@ export class MysqlUserRepository implements UserInterface {
     async sign_out(uuid: string, transaction?: any): Promise<boolean> {
         try {
             return await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ isLogging: false }, { where: { uuid }, transaction });
                 return true;
             });
         } catch (error) {

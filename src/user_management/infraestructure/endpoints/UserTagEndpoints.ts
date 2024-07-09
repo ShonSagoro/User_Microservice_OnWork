@@ -7,5 +7,5 @@ export function setupTagEndpoints(app: Express) {
     app.get(`/${model}/health`, (req, res) => {
         res.status(200).json({ status: 'OK' });
     });
-    // app.post(`/${model}/`, createTagController.execute.bind(createTagController));
+    app.post(`/${model}/`, createTagController.execute.bind(createTagController));
 }
