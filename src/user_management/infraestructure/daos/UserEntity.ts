@@ -1,5 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../database/mysqldb';
+import TagEntity from './TagEntity';
+import { Sequelize } from 'sequelize';
 
 class UserEntity extends Model {
     public uuid!: string;

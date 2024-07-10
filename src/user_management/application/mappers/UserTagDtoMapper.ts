@@ -17,7 +17,7 @@ export class UserTagDtoMapper {
     }
 
     static toUserTagResponse(userTag: UserTag): UserTagResponse{
-        return new UserTagResponse(userTag.uuid, userTag.userid, userTag.tagid);
+        return new UserTagResponse(userTag.uuid, userTag.user_uuid, userTag.tag_uuid);
     }
 
     static toDomain(createUserTagRequest: CreateUserTagRequest): UserTag {

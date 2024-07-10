@@ -1,11 +1,15 @@
 import { Express } from "express";
-import { createTagController, deleteTagController, getByUuidTagController, listTagController, updateTagController } from "../Dependencies";
+import JWTMiddleware from "../../../middleware/JWTMiddleware";
+import { createUserTagController, deleteUserTagController } from "../Dependencies";
 
-let model = 'user_tag';
+let model = 'user_tags';
+const Verifytoken = JWTMiddleware.VerifyToken
 
-export function setupTagEndpoints(app: Express) {
+
+export function setupUserTagEndpoints(app: Express) {
     app.get(`/${model}/health`, (req, res) => {
         res.status(200).json({ status: 'OK' });
     });
-    app.post(`/${model}/`, createTagController.execute.bind(createTagController));
+    app.post(`/${model}/`, Verifytoken, createUserTagController.execute.bind(createUserTagController));
+    app.delete(`/${model}/:uuid`, Verifytoken, deleteUserTagController.execute.bind(deleteUserTagController));
 }

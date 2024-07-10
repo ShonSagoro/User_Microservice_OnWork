@@ -11,10 +11,28 @@ import { MysqlUserTagRepository } from "./MysqlUserTagRepository";
 import { MysqlTagRepository } from "./MysqlTagRepository";
 import { Tag } from "../../domain/entities/Tag";
 import TagEntity from "../daos/TagEntity";
+import { TokenAuthServices } from "../services/TokenServices";
+import { ByEncryptServices } from "../services/ByEncryptServices";
 
 export class MysqlUserRepository implements UserInterface {
     private _userTagRepository: MysqlUserTagRepository | null = null;
     private _tagRepository: MysqlTagRepository | null = null;
+    private _encryptionService: EncryptService | null = null;
+    private _tokenServices: TokenServices | null = null;
+
+    get encryptionService(): EncryptService {
+        if (!this._encryptionService) {
+            this._encryptionService = new ByEncryptServices();
+        }
+        return this._encryptionService;
+    }
+
+    get tokenServices(): TokenServices {
+        if (!this._tokenServices) {
+            this._tokenServices = new TokenAuthServices();
+        }
+        return this._tokenServices;
+    }
 
     get userTagRepository(): MysqlUserTagRepository {
         if (!this._userTagRepository) {
@@ -30,9 +48,6 @@ export class MysqlUserRepository implements UserInterface {
         return this._tagRepository;
     }
 
-    constructor(readonly encryptionService: EncryptService, readonly tokenServices: TokenServices) {
-    }
-
     async find_all_tags_by_user_uuid(uuid: string): Promise<Tag[] | null> {
         try{
             return await this.tagRepository.findByUserUUID(uuid);
@@ -41,6 +56,7 @@ export class MysqlUserRepository implements UserInterface {
             return null;
         }
     }
+
 
     async find_by_ubication(longitude: number, latitude: number): Promise<User[] | null> {
         try {
@@ -52,22 +68,12 @@ export class MysqlUserRepository implements UserInterface {
                 include: [{ model: TagEntity, as: 'tags' }]
             });
     
-            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity));
-        } catch (error) {
+            const users = await Promise.all(userEntities.map(async (userEntity) => {
+                let tagsEntities = await this.findTagsByUser(userEntity.uuid);
+                return UserDaoMapper.toDomain(userEntity, tagsEntities);
+            }));
+            return users;        } catch (error) {
             console.error('Error finding user by location:', error);
-            return null;
-        }
-    }
-
-    async find_by_tag_uuid(uuid: string): Promise<User[] | null> {
-        try {
-            const userTags: UserTag[] | null = await this.userTagRepository.findByUuidTag(uuid);
-            if (!userTags) return null;
-            const users = userTags.map((userTag: UserTag) => userTag.userid);
-            const userEntities = await UserEntity.findAll({ where: { uuid: users } });
-            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity)); 
-        } catch (error) {
-            console.error('Error finding by tag UUID:', error);
             return null;
         }
     }
@@ -84,6 +90,7 @@ export class MysqlUserRepository implements UserInterface {
             return null;
         }
     }
+    
     async list_providers(transaction?: any): Promise<User[] | null> {
         try {
             const userEntities = await UserEntity.findAll({ 
@@ -92,7 +99,12 @@ export class MysqlUserRepository implements UserInterface {
                 },
                 transaction 
             });
-            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity));
+            if (!userEntities) return null;
+            const users = await Promise.all(userEntities.map(async (userEntity) => {
+                let tagsEntities = await this.findTagsByUser(userEntity.uuid);
+                return UserDaoMapper.toDomain(userEntity, tagsEntities);
+            }));
+            return users;
         } catch (error) {
             console.error('Error listing users:', error);
             return null;
@@ -136,7 +148,11 @@ export class MysqlUserRepository implements UserInterface {
     async findByEmail(email: string, transaction?: any): Promise<User | null> {
         try {
             return await UserEntity.findOne({ where: { email }, transaction })
-                .then(userEntity => userEntity ? UserDaoMapper.toDomain(userEntity) : null);
+                .then(async (userEntity) => {
+                    if (!userEntity) return null;
+                    let tagsEntities = await this.findTagsByUser(userEntity.uuid);
+                    return UserDaoMapper.toDomain(userEntity,tagsEntities)
+                });
         } catch (error) {
             console.error('Error finding user by email:', error);
             return null;
@@ -144,15 +160,49 @@ export class MysqlUserRepository implements UserInterface {
     }
 
 
+    
+    async find_by_tag_uuid(uuid: string): Promise<User[] | null> {
+        try {
+            const userTags: UserTag[] | null = await this.userTagRepository.findByUuidTag(uuid);
+            if (!userTags) return null;
+            const users = userTags.map((userTag: UserTag) => userTag.user_uuid);
+            const userEntities = await UserEntity.findAll({ where: { uuid: users } });
+            const tags = userTags.map(userTag => userTag.tag_uuid);
+            let tagsEntities = await TagEntity.findAll({ where: { uuid: tags } });
+            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity, tagsEntities)); 
+        } catch (error) {
+            console.error('Error finding by tag UUID:', error);
+            return null;
+        }
+    }
+
     async findByUUID(uuid: string, transaction?: any): Promise<User | null> {
         try {
             return await UserEntity.findByPk(uuid, {            
-                include: [{ model: TagEntity, as: 'tags' }], 
                 transaction 
-            }).then(userEntity => userEntity ? UserDaoMapper.toDomain(userEntity) : null);
+            }).then(async (userEntity) => {
+                if (!userEntity) return null;
+                let tagsEntities = await this.findTagsByUser(uuid);
+                return UserDaoMapper.toDomain(userEntity, tagsEntities);
+            });
         } catch (error) {
             console.error('Error finding user by UUID:', error);
             return null;
+        }
+    }
+
+    async findTagsByUser(uuid: string): Promise<TagEntity[]> {
+        try{
+            let userTags: UserTag[] | null = await this.userTagRepository.findByUuidUser(uuid);
+            console.log("LLEGE", userTags);
+            if (!userTags) return [];
+            const tags = userTags.map(userTag => userTag.tag_uuid);
+            console.log("TAGS", tags);
+            let tagsEntities = await TagEntity.findAll({ where: { uuid: tags } });
+            return tagsEntities;
+        }catch(error){
+            console.error('Error getting tags by user:', error);
+            return [];
         }
     }
 
@@ -195,8 +245,11 @@ export class MysqlUserRepository implements UserInterface {
                 transaction,
                 include: [{ model: TagEntity, as: 'tags' }], 
             });
-            return userEntities.map(userEntity => UserDaoMapper.toDomain(userEntity));
-        } catch (error) {
+            const users = await Promise.all(userEntities.map(async (userEntity) => {
+                let tagsEntities = await this.findTagsByUser(userEntity.uuid);
+                return UserDaoMapper.toDomain(userEntity, tagsEntities);
+            }));
+            return users;        } catch (error) {
             console.error('Error listing users:', error);
             return null;
         }

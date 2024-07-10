@@ -1,6 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../database/mysqldb';
-
 class TagEntity extends Model {
     public uuid!: string;
     public title!: string;
@@ -28,5 +27,4 @@ TagEntity.init(
         modelName: 'Tag',
     }
 );
-
 export default TagEntity;

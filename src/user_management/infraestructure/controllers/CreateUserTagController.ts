@@ -1,10 +1,11 @@
 import { BaseResponse } from './../../application/dtos/response/BaseResponse';
 import { Request, Response } from "express";
 import { CreateTagUseCases } from '../../application/use_case/CreateTagUseCases';
+import { CreateUserTagUseCases } from '../../application/use_case/CreateUserTagUseCase';
 
 export class CreateUserTagController {
 
-    constructor(readonly useCase: CreateTagUseCases) {
+    constructor(readonly useCase: CreateUserTagUseCases) {
     }
 
     async execute(req: Request, res: Response) {

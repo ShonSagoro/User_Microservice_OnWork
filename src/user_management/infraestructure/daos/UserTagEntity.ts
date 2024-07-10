@@ -1,12 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../database/mysqldb';
-import User from './UserEntity';
-import Tag from './TagEntity';
+import UserEntity from './UserEntity';
+import TagEntity from './TagEntity';
 
 class UserTagEntity extends Model {
     public uuid!: string;
-    public userId!: string;
-    public tagId!: string;
 }
 
 UserTagEntity.init(
@@ -16,28 +14,25 @@ UserTagEntity.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        userId: {
-            type: DataTypes.UUID,
-            references: {
-                model: User,
-                key: 'uuid',
-            },
-        },
-        tagId: {
-            type: DataTypes.UUID,
-            references: {
-                model: Tag,
-                key: 'uuid',
-            },
-        },
     },
     {
         sequelize,
-        modelName: 'UserTag',
-    }
+        modelName: 'user_tag',
+        timestamps: false,
+    },
 );
 
-User.belongsToMany(Tag, { through: UserTagEntity });
-Tag.belongsToMany(User, { through: UserTagEntity });
+
+UserEntity.belongsToMany(TagEntity, {
+    through: 'user_tag', 
+    foreignKey: 'user_uuid', 
+    as: 'Tags'
+});
+
+TagEntity.belongsToMany(UserEntity, {
+    through: 'user_tag',
+    foreignKey: 'tag_uuid',
+    as: 'Users'
+});
 
 export default UserTagEntity;

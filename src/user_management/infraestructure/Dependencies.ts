@@ -55,13 +55,16 @@ import { ListTagController } from './controllers/ListTagController';
 import { CreateTagController } from './controllers/CreateTagController';
 import { MysqlUserTagRepository } from './repositories/MysqlUserTagRepository';
 import { CreateUserTagUseCases } from '../application/use_case/CreateUserTagUseCase';
+import { CreateUserTagController } from './controllers/CreateUserTagController';
+import { DeleteUserTagController } from './controllers/DeleteUserTagController';
+import { DeleteTagUserUseCase } from '../application/use_case/DeleteTagUserUseCase';
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
 export const tokenServices = new TokenAuthServices();
 export const userSaga = new UserSagaImpl();
 
-export const databaseRepository = new MysqlUserRepository(encriptServices, tokenServices);
+export const databaseRepository = new MysqlUserRepository();
 export const databaseRepositoryTag = new MysqlTagRepository();
 export const databaseRepositoryTagUser = new MysqlUserTagRepository();
 
@@ -119,3 +122,6 @@ export const deleteTagController = new UpdateTagController(deleteTagUseCase);
 export const updateTagController = new UpdateTagController(updateTagUseCase);
 
 export const createUserTagUseCases = new CreateUserTagUseCases(databaseRepositoryTagUser);
+export const createUserTagController = new CreateUserTagController(createUserTagUseCases);
+export const deleteTagUserUseCase = new DeleteTagUserUseCase(databaseRepositoryTagUser);
+export const deleteUserTagController = new DeleteUserTagController(deleteTagUserUseCase);

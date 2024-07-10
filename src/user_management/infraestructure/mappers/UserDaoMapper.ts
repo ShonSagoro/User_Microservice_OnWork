@@ -7,9 +7,12 @@ import { Plan } from '../../domain/entities/enums/Plan';
 import { Ubication } from '../../domain/entities/Ubication';
 import { Profile } from '../../domain/entities/Profile';
 import { Tag } from '../../domain/entities/Tag';
+import TagEntity from '../daos/TagEntity';
+import { TagDaoMapper } from './TagDaoMapper';
 
 export class UserDaoMapper {
-    static toDomain(userEntity: UserEntity): User {
+    static toDomain(userEntity: UserEntity, tags: TagEntity[]): User {
+        console.log(userEntity.dataValues);
         const contact = new Contact(
             userEntity.dataValues.name,
             userEntity.dataValues.lastName,
@@ -38,8 +41,8 @@ export class UserDaoMapper {
             userEntity.dataValues.isLogging
         );
 
-        const tags: Tag[] = userEntity.dataValues.tags || [];
-
+        const tagsEntity: TagEntity[] = tags  || [];
+        const tagsDomain: Tag[] = tagsEntity.map(tag => TagDaoMapper.toDomain(tag));
         const user = new User(
             contact,
             credentials,
@@ -48,7 +51,7 @@ export class UserDaoMapper {
             role,
             ubication,
             profile,
-            tags
+            tagsDomain
         );
         
         user.uuid = userEntity.dataValues.uuid;

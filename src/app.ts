@@ -5,6 +5,8 @@ import {Signale} from "signale";
 
 import { setupUserEndpoints } from './user_management/infraestructure/endpoints/UserEndpoints';
 import cors from 'cors';
+import { setupTagEndpoints } from './user_management/infraestructure/endpoints/TagEndpoints';
+import { setupUserTagEndpoints } from './user_management/infraestructure/endpoints/UserTagEndpoints';
 dotenv.config();
 
 const app = express();
@@ -17,6 +19,8 @@ const PORT:number  = Number(process.env.PORT_SERVER) || 3002;
 app.use(express.json()); 
 app.use(morgan('dev'))
 setupUserEndpoints(app);
+setupTagEndpoints(app);
+setupUserTagEndpoints(app);
 let server = null;
 
 async function startServer() {

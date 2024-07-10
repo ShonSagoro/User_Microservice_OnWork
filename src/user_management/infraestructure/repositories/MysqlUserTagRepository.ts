@@ -4,13 +4,45 @@ import { UserTagInterface } from "../../domain/ports/UserTagInterface";
 import { UserTag } from "../../domain/entities/UserTag";
 import UserTagEntity from "../daos/UserTagEntity";
 import { UserTagDaoMapper } from "../mappers/UserTagDaoMapper";
+import UserEntity from "../daos/UserEntity";
+import { MysqlTagRepository } from "./MysqlTagRepository";
+import { MysqlUserRepository } from "./MysqlUserRepository";
 
 export class MysqlUserTagRepository implements UserTagInterface {
+    private _userRepository: MysqlUserRepository | null = null;
+
+    private _tagRepository: MysqlTagRepository | null = null;
+
+    get tagRepository(): MysqlTagRepository {
+        if (!this._tagRepository) {
+            this._tagRepository = new MysqlTagRepository();
+        }
+        return this._tagRepository;
+    }
+
+    get userRepository(): MysqlUserRepository {
+        if (!this._userRepository) {
+            this._userRepository = new MysqlUserRepository();
+        }
+        return this._userRepository;
+    }
+
+    async delete(uuid: string): Promise<boolean> {
+        try {
+            const result = await UserTagEntity.destroy({
+                where: { uuid }
+            });
+            return result > 0;
+        } catch (error) {
+            console.error('Error deleting tag:', error);
+            return false;
+        }
+    }
  
     async deleteByUuidTag(uuid: string): Promise<boolean> {
         try {
             const result = await UserTagEntity.destroy({
-                where: { tagUuid: uuid }
+                where: { TagUuid: uuid }
             });
             return result > 0;
         } catch (error) {
@@ -22,7 +54,7 @@ export class MysqlUserTagRepository implements UserTagInterface {
     async deleteByUuidUser(uuid: string): Promise<boolean> {
         try {
             const result = await UserTagEntity.destroy({
-                where: { userUuid: uuid }
+                where: { UserUuid: uuid }
             });
             return result > 0;
         } catch (error) {
@@ -34,9 +66,9 @@ export class MysqlUserTagRepository implements UserTagInterface {
     async findByUuidUser(uuid: string): Promise<UserTag[] | null> {
         try {
             const userTagEntities = await UserTagEntity.findAll({
-                where: { userUuid: uuid },
-                include: [{ model: TagEntity, as: 'tag' }]
+                where: { user_uuid: uuid },
             });
+            console.log(userTagEntities);
             if (!userTagEntities) return null;
             return userTagEntities.map(UserTagDaoMapper.toDomain);
         } catch (error) {
@@ -47,10 +79,11 @@ export class MysqlUserTagRepository implements UserTagInterface {
 
     async findByUuidTag(uuid: string): Promise<UserTag[] | null> {
         try {
+            console.log('findByUuidTag', uuid);
             const userTagEntities = await UserTagEntity.findAll({
-                where: { tagUuid: uuid },
-                include: [{ model: UserTagEntity, as: 'user' }]
+                where: { tag_uuid: uuid },
             });
+            console.log('findByUuidTag', userTagEntities);
             if (!userTagEntities) return null;
             return userTagEntities.map(UserTagDaoMapper.toDomain);
         } catch (error) {

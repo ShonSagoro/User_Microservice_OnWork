@@ -18,11 +18,20 @@ export class MysqlTagRepository implements TagInterface {
         return this._userTagRepository;
     }
 
+    async findByUUIDEntity(uuid: string): Promise<TagEntity | null> {
+        try {
+            return await TagEntity.findByPk(uuid);
+        } catch (error) {
+            console.error('Error finding by UUID:', error);
+            return null;
+        }
+    }
+
     async findByUserUUID(uuid: string): Promise<Tag[]> {
         try {
             const userTags: UserTag[] | null = await this.userTagRepository.findByUuidUser(uuid);
             if (!userTags || userTags.length === 0) return [];
-            const tags = userTags.map((userTag: UserTag) => userTag.tagid);
+            const tags = userTags.map((userTag: UserTag) => userTag.tag_uuid);
             const tagEntities = await TagEntity.findAll({ where: { uuid: tags } });
             return tagEntities.map(tagEntity => TagDaoMapper.toDomain(tagEntity));
         } catch (error) {

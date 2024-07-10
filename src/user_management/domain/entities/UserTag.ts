@@ -5,14 +5,14 @@ export class UserTag implements ValidatableEntity {
 
     public uuid: string;
     
-    public userid:string;
+    public user_uuid:string;
 
-    public tagid:string;
+    public tag_uuid:string;
 
-    constructor(userid: string, tagid:string){
+    constructor(user_uuid: string, tag_uuid:string){
         this.uuid = uuidv4();
-        this.userid=userid
-        this.tagid=tagid
+        this.user_uuid=user_uuid
+        this.tag_uuid=tag_uuid
     }
 
     async validate() {
