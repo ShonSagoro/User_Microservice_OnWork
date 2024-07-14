@@ -58,6 +58,7 @@ import { CreateUserTagUseCases } from '../application/use_case/CreateUserTagUseC
 import { CreateUserTagController } from './controllers/CreateUserTagController';
 import { DeleteUserTagController } from './controllers/DeleteUserTagController';
 import { DeleteTagUserUseCase } from '../application/use_case/DeleteTagUserUseCase';
+import { DeleteTagController } from './controllers/DeleteTagController';
 
 export const encriptServices = new ByEncryptServices();
 export const nodemailerEmailService = new NodemailerEmailService();
@@ -118,7 +119,7 @@ export const updateTagUseCase = new UpdateTagUseCase(databaseRepositoryTag);
 export const createTagController = new CreateTagController(createTagUseCase);
 export const listTagController = new ListTagController(listTagUseCase);
 export const getByUuidTagController = new GetByUuidTagController(getByUuidTagUseCase);
-export const deleteTagController = new UpdateTagController(deleteTagUseCase);
+export const deleteTagController = new DeleteTagController(deleteTagUseCase);
 export const updateTagController = new UpdateTagController(updateTagUseCase);
 
 export const createUserTagUseCases = new CreateUserTagUseCases(databaseRepositoryTagUser);

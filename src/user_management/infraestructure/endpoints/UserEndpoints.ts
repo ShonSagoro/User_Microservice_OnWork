@@ -1,6 +1,6 @@
 import { Express } from "express";
-import { activateUserController, deleteUserController, getByTagUuidController, getByUbicationController, getByUuidController, listUsersController, listUsersProvidersController, refreshTokenUserController, signInProviderUserController, signInUserController, signOutUserController, signUpUserController, signUpUserProviderController, updatePasswordUserController, updatePlanUserController, updateProfileUserController, updateRoleUserController, updateUbicationController, updateUserController } from "../Dependencies";
 import JWTMiddleware from "../../../middleware/JWTMiddleware";
+import { activateUserController, deleteUserController, getByTagUuidController, getByUbicationController, getByUuidController, listUsersController, listUsersProvidersController, refreshTokenUserController, signInProviderUserController, signInUserController, signOutUserController, signUpUserController, signUpUserProviderController, updatePasswordUserController, updatePlanUserController, updateProfileUserController, updateRoleUserController, updateUbicationController, updateUserController } from "../dependencies/user_dependencies";
 let model = "users";
 const Verifytoken = JWTMiddleware.VerifyToken
 
