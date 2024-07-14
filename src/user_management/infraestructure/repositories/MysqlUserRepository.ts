@@ -142,7 +142,8 @@ export class MysqlUserRepository implements UserInterface {
         } catch (error) {
             console.error('Error signing in:', error);
             return null;
-        }    }
+        }    
+    }
 
 
     async findByEmail(email: string, transaction?: any): Promise<User | null> {
@@ -194,10 +195,8 @@ export class MysqlUserRepository implements UserInterface {
     async findTagsByUser(uuid: string): Promise<TagEntity[]> {
         try{
             let userTags: UserTag[] | null = await this.userTagRepository.findByUuidUser(uuid);
-            console.log("LLEGE", userTags);
             if (!userTags) return [];
             const tags = userTags.map(userTag => userTag.tag_uuid);
-            console.log("TAGS", tags);
             let tagsEntities = await TagEntity.findAll({ where: { uuid: tags } });
             return tagsEntities;
         }catch(error){
@@ -277,9 +276,9 @@ export class MysqlUserRepository implements UserInterface {
             return await this.withTransaction(async (transaction: any) => {
                 let user = await this.findByEmail(email, transaction);
                 if (!user) return null;
-                user.status.isLoggin = true;
-                await this.update(user.uuid, user, transaction);
                 if (await this.encryptionService.compare(password, user.credentials.password)) {
+                    user.status.isLoggin = true;
+                    await UserEntity.update({ isLoggin: true }, { where: { uuid: user.uuid }, transaction });
                     return user;
                 } else {
                     return null;

@@ -12,7 +12,6 @@ import { TagDaoMapper } from './TagDaoMapper';
 
 export class UserDaoMapper {
     static toDomain(userEntity: UserEntity, tags: TagEntity[]): User {
-        console.log(userEntity.dataValues);
         const contact = new Contact(
             userEntity.dataValues.name,
             userEntity.dataValues.lastName,

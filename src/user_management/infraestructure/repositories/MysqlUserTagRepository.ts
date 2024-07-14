@@ -68,7 +68,6 @@ export class MysqlUserTagRepository implements UserTagInterface {
             const userTagEntities = await UserTagEntity.findAll({
                 where: { user_uuid: uuid },
             });
-            console.log(userTagEntities);
             if (!userTagEntities) return null;
             return userTagEntities.map(UserTagDaoMapper.toDomain);
         } catch (error) {
@@ -79,11 +78,9 @@ export class MysqlUserTagRepository implements UserTagInterface {
 
     async findByUuidTag(uuid: string): Promise<UserTag[] | null> {
         try {
-            console.log('findByUuidTag', uuid);
             const userTagEntities = await UserTagEntity.findAll({
                 where: { tag_uuid: uuid },
             });
-            console.log('findByUuidTag', userTagEntities);
             if (!userTagEntities) return null;
             return userTagEntities.map(UserTagDaoMapper.toDomain);
         } catch (error) {

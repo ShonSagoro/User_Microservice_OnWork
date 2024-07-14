@@ -1,4 +1,3 @@
-import { Tag } from "../../../domain/entities/Tag";
 import { TagResponse } from "./TagResponse";
 
 export class UserResponse {
