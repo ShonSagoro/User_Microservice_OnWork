@@ -1,6 +1,6 @@
 import { Express } from "express";
 import JWTMiddleware from "../../../middleware/JWTMiddleware";
-import { createUserTagController, deleteUserTagController } from "../Dependencies";
+import { createUserTagController, deleteUserTagController } from "../dependencies/user_tag_dependencies";
 
 let model = 'user_tags';
 const Verifytoken = JWTMiddleware.VerifyToken

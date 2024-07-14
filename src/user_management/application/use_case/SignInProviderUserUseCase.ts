@@ -12,7 +12,7 @@ export class SignInProviderUserUseCase {
         if (!singInUserRequest) {
             return new BaseResponse(null, 'Bad request', false, 400);
         }
-        let result: User | null = await this.userInterface.sing_in_provider(singInUserRequest.email, singInUserRequest.password);
+        let result: User | null = await this.userInterface.sign_in_provider(singInUserRequest.email, singInUserRequest.password);
         if (result) {
             if (!result.status.verified) {
                 return new BaseResponse(null, 'User has not been verified', false, 400);

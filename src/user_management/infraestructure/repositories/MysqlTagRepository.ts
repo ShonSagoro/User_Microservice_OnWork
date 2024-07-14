@@ -71,9 +71,13 @@ export class MysqlTagRepository implements TagInterface {
     
             const updateData: Partial<TagEntity> = TagDaoMapper.toUpdateEntity(tag, uuid);
             return await this.withTransaction(async (transaction: any) => {
-                await TagEntity.update(updateData, { where: { uuid }, transaction });
+                await TagEntity.update({
+                    title: updateData.title,
+                    description: updateData.description,
+                }, { where: { uuid }, transaction });
                 return await this.withTransaction(async (transaction: any) => { 
                     await TagEntity.update(updateData, { where: { uuid }, transaction }); 
+                    tag.uuid = uuid;
                     return tag; 
                 });
             });

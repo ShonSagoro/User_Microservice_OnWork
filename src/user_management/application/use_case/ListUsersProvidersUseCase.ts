@@ -2,7 +2,9 @@ import { User } from "../../domain/entities/User";
 import { UserInterface } from "../../domain/ports/UserInterface";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 import { UserDtoMapper } from "../mappers/UserDtoMapper";
+import {Signale} from "signale";
 
+const signale = new Signale();
 export class ListUsersProvidersUseCase {
     constructor(readonly userInterface: UserInterface) {}
 

@@ -42,7 +42,7 @@ export class MysqlUserTagRepository implements UserTagInterface {
     async deleteByUuidTag(uuid: string): Promise<boolean> {
         try {
             const result = await UserTagEntity.destroy({
-                where: { TagUuid: uuid }
+                where: { tag_uuid: uuid }
             });
             return result > 0;
         } catch (error) {
@@ -54,7 +54,7 @@ export class MysqlUserTagRepository implements UserTagInterface {
     async deleteByUuidUser(uuid: string): Promise<boolean> {
         try {
             const result = await UserTagEntity.destroy({
-                where: { UserUuid: uuid }
+                where: { user_uuid: uuid }
             });
             return result > 0;
         } catch (error) {

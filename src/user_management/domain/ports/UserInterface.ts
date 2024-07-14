@@ -13,7 +13,7 @@ export interface UserInterface {
     sign_up(user: User): Promise<User | null>;
     sign_up_provider(user: User): Promise<User | null>;
     sign_in (email:string, password:string):Promise<User|null>;
-    sing_in_provider (email:string, password:string):Promise<User|null>;
+    sign_in_provider (email:string, password:string):Promise<User|null>;
     sign_out (uuid:string):Promise<boolean>; 
     update_password(uuid:string, old_password:string, new_password:string):Promise<User|null>; //direct
     update_role(uuid:string, role:string):Promise<User|null>; //direct

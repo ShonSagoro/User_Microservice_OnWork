@@ -8,12 +8,12 @@ export function setupUserEndpoints(app: Express) {
     app.get(`/${model}/health`, (req, res) => {
         res.status(200).json({ status: 'OK' });
     });
-    app.get(`/${model}/:uuid`, Verifytoken, getByUuidController.execute.bind(getByUuidController));
     app.get(`/${model}/`, Verifytoken, listUsersController.execute.bind(listUsersController));
     app.get(`/${model}/sign_out/:uuid`, Verifytoken, signOutUserController.execute.bind(signOutUserController));
     app.get(`/${model}/providers`, Verifytoken, listUsersProvidersController.execute.bind(listUsersProvidersController));
     app.get(`/${model}/refresh/:uuid`, Verifytoken, refreshTokenUserController.execute.bind(refreshTokenUserController));
     app.get(`/${model}/tag/:uuid`, Verifytoken, getByTagUuidController.execute.bind(getByTagUuidController));
+    app.get(`/${model}/:uuid`, Verifytoken, getByUuidController.execute.bind(getByUuidController));
     app.post(`/${model}/ubication/:uuid`,Verifytoken,  getByUbicationController.execute.bind(getByUbicationController));
     app.post(`/${model}/sign_up`, signUpUserController.execute.bind(signUpUserController));
     app.post(`/${model}/sign_in`, signInUserController.execute.bind(signInUserController));

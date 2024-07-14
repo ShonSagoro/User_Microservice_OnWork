@@ -128,12 +128,14 @@ export class MysqlUserRepository implements UserInterface {
         }
     }
     
-    async sing_in_provider(email: string, password: string): Promise<User | null> {
+    async sign_in_provider(email: string, password: string): Promise<User | null> {
         try {
             return await this.withTransaction(async (transaction: any) => {
                 let user = await this.findByEmail(email, transaction);
                 if (!user || user.role != "SERVICE_PROVIDER") return null;
                 if (await this.encryptionService.compare(password, user.credentials.password)) {
+                    await UserEntity.update({ isLogging: true }, { where: { uuid: user.uuid }, transaction });
+
                     return user;
                 } else {
                     return null;
@@ -220,11 +222,20 @@ export class MysqlUserRepository implements UserInterface {
         try {
             const existingUser = await this.findByUUID(uuid);
             if (!existingUser) return null;
-    
+            
             const updateData: Partial<UserEntity> = UserDaoMapper.toUpdateEntity(user, uuid);
             
             await this.withTransaction(async (transaction: any) => {
-                await UserEntity.update(updateData, { 
+                await UserEntity.update(
+                    {
+                        email: updateData.email,
+                        name: updateData.name,
+                        lastName: updateData.lastName,
+                        phoneNumber: updateData.phoneNumber,
+                        birthday: updateData.birthday,
+                        region: updateData.region,
+
+                    }, { 
                     where: { uuid },
                     transaction 
                 });
@@ -242,7 +253,6 @@ export class MysqlUserRepository implements UserInterface {
         try {
             const userEntities = await UserEntity.findAll({ 
                 transaction,
-                include: [{ model: TagEntity, as: 'tags' }], 
             });
             const users = await Promise.all(userEntities.map(async (userEntity) => {
                 let tagsEntities = await this.findTagsByUser(userEntity.uuid);
@@ -278,7 +288,7 @@ export class MysqlUserRepository implements UserInterface {
                 if (!user) return null;
                 if (await this.encryptionService.compare(password, user.credentials.password)) {
                     user.status.isLoggin = true;
-                    await UserEntity.update({ isLoggin: true }, { where: { uuid: user.uuid }, transaction });
+                    await UserEntity.update({ isLogging: true }, { where: { uuid: user.uuid }, transaction });
                     return user;
                 } else {
                     return null;
@@ -318,6 +328,7 @@ export class MysqlUserRepository implements UserInterface {
 
     async update_password(uuid: string, old_password: string, new_password: string): Promise<User|null> {
         try {
+            new_password = await this.encryptionService.execute(new_password);
             let userExists = await this.findByUUID(uuid);
             if (!userExists) return null;
             if (!await this.encryptionService.compare(old_password, userExists.credentials.password)) return null;
