@@ -4,8 +4,12 @@ import { ListTagUseCase } from "../../application/use_case/ListTagUseCase";
 import { DeleteTagUseCase } from "../../application/use_case/DeleteTagUseCase";
 import GetUserByTagUuidController from "../controllers/GetUserByTagUuidController";
 import { UpdateTagController } from "../controllers/UpdateTagController";
-import { UpdateTagController } from "../controllers/UpdateTagController";
 import { MysqlTagRepository } from "../repositories/MysqlTagRepository";
+import { UpdateTagUseCase } from "../../application/use_case/UpdateTagUseCase";
+import { CreateTagController } from "../controllers/CreateTagController";
+import { ListTagController } from "../controllers/ListTagController";
+import { GetByUuidTagController } from "../controllers/GetByUuidTagController";
+import { DeleteTagController } from "../controllers/DeleteTagController";
 
 const tagRepository = new MysqlTagRepository();
 
@@ -21,4 +25,3 @@ export const getByUuidTagController = new GetByUuidTagController(getByUuidTagUse
 export const updateTagController = new UpdateTagController(updateTagUseCase);
 export const deleteTagController = new DeleteTagController(deleteTagUseCase);
 
-export const getByTagUuidController = new GetUserByTagUuidController(getByTagUseCase);
