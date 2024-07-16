@@ -1,5 +1,6 @@
 import { ActivateUserUseCase } from "../../application/use_case/ActivateUserUseCase";
 import { DeleteUserUseCase } from "../../application/use_case/DeleteUserUseCase";
+import { FindUserByUbicationUseCase } from "../../application/use_case/FindUserByUbicationUseCase";
 import { GetByTagUserUseCase } from "../../application/use_case/GetByTagUserUseCase";
 import { GetByUbicationUserUseCase } from "../../application/use_case/GetByUbicationUserUseCase";
 import { GetByUserUseCase } from "../../application/use_case/GetByUserUseCase";
@@ -19,6 +20,7 @@ import { UpdateUbicationUseCase } from "../../application/use_case/UpdateUbicati
 import { UpdateUserUseCase } from "../../application/use_case/UpdateUserUseCase";
 import { ActivateUserController } from "../controllers/ActivateUserController";
 import { DeleteUserController } from "../controllers/DeleteUserController";
+import FindUserByUbicationController from "../controllers/FindUserByUbicationController";
 import GetUserByEmailController from "../controllers/GetUserByEmailController";
 import GetUserByTagUuidController from "../controllers/GetUserByTagUuidController";
 import GetUserByUbicationController from "../controllers/GetUserByUbicationController";
@@ -68,6 +70,8 @@ export const signUpUserProviderCase = new SignUpUserProviderUseCase(userReposito
 export const refreshTokenUseCase = new RefreshUserUseCase(userRepository);
 export const getByTagUseCase = new GetByTagUserUseCase(userRepository);
 export const getByUbicationUseCase = new GetByUbicationUserUseCase(userRepository);
+export const findUserByUbicationUseCase = new FindUserByUbicationUseCase(userRepository);
+
 
 export const signInUserController = new SignInUserController(signInUserCase);
 export const signUpUserController = new SingUpUserController(signUpUserCase, emailService);
@@ -89,3 +93,4 @@ export const signUpUserProviderController = new SignUpUserProvidersController(si
 export const refreshTokenUserController = new RefreshTokenUserController(refreshTokenUseCase);
 export const getByTagUuidController = new GetUserByTagUuidController(getByTagUseCase);
 export const getByUbicationController = new GetUserByUbicationController(getByUbicationUseCase);
+export const findUserByUbicationController = new FindUserByUbicationController(findUserByUbicationUseCase);

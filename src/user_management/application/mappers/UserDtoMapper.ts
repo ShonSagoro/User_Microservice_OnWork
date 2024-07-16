@@ -28,6 +28,7 @@ import { VerifiedUserRequest } from '../dtos/request/VerifiedUserRequest';
 import { UserProviderResponse } from '../dtos/response/UserProviderResponse';
 import { Tag } from '../../domain/entities/Tag';
 import { TagDtoMapper } from './TagDtoMapper';
+import { FindUserByUbicationRequest } from '../dtos/request/FindUserByUbicationRequest';
 
 export class UserDtoMapper {
     
@@ -37,6 +38,14 @@ export class UserDtoMapper {
             return null;
         }
         return new SignUpUserRequest(body.email, body.password, body.name, body.lastName, body.phoneNumber, body.birthday, body.region);
+    }
+
+    static toFindUserByUbicationRequest(req: Request): FindUserByUbicationRequest | null {
+        const body = req.body;
+        if (!body.latitude || !body.longitud) {
+            return null;
+        }
+        return new FindUserByUbicationRequest(parseFloat(body.latitude), parseFloat(body.longitud));
     }
 
     static toActivateUserRequest(req: Request): VerifiedUserRequest | null {
@@ -84,12 +93,12 @@ export class UserDtoMapper {
 
     static toUpdateUbicationUserRequest(req: Request): UpdateUbicationUserRequest {
         const body = req.body;
-        return new UpdateUbicationUserRequest(parseInt(body.latitude), parseInt(body.longitude));
+        return new UpdateUbicationUserRequest(parseFloat(body.latitude), parseFloat(body.longitude));
     }
 
     static toUbicationUserRequest(req: Request): UpdateUbicationUserRequest {
         const body = req.body;
-        return new UpdateUbicationUserRequest(parseInt(body.latitude), parseInt(body.longitude));
+        return new UpdateUbicationUserRequest(parseFloat(body.latitude), parseFloat(body.longitude));
     }
     static toUserResponse(user: User): UserResponse {
         let response = new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.plan, user.role, user.ubication.latitude, user.ubication.longitude, user.profile.description, user.profile.company);

@@ -14,6 +14,7 @@ export function setupUserEndpoints(app: Express) {
     app.get(`/${model}/refresh/:uuid`, Verifytoken, refreshTokenUserController.execute.bind(refreshTokenUserController));
     app.get(`/${model}/tag/:uuid`, Verifytoken, getByTagUuidController.execute.bind(getByTagUuidController));
     app.get(`/${model}/:uuid`, Verifytoken, getByUuidController.execute.bind(getByUuidController));
+    app.post(`/${model}/ubication`,Verifytoken,  getByUbicationController.execute.bind(getByUbicationController));
     app.post(`/${model}/ubication/:uuid`,Verifytoken,  getByUbicationController.execute.bind(getByUbicationController));
     app.post(`/${model}/sign_up`, signUpUserController.execute.bind(signUpUserController));
     app.post(`/${model}/sign_in`, signInUserController.execute.bind(signInUserController));
