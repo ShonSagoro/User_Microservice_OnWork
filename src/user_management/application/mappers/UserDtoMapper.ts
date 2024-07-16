@@ -26,7 +26,6 @@ import { RoleUserUpdateResponse } from '../dtos/response/RoleUserUpdateResponse'
 import { SingUpUserResponse } from '../dtos/response/SingUpUserResponse';
 import { VerifiedUserRequest } from '../dtos/request/VerifiedUserRequest';
 import { UserProviderResponse } from '../dtos/response/UserProviderResponse';
-import { TagDaoMapper } from '../../infraestructure/mappers/TagDaoMapper';
 import { Tag } from '../../domain/entities/Tag';
 import { TagDtoMapper } from './TagDtoMapper';
 
