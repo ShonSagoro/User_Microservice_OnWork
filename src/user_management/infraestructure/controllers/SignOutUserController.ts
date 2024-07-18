@@ -14,13 +14,14 @@ export class SignOutUserController {
         const { uuid } = req.params;
         const headers = req.headers as IncomingHttpHeaders;
         const authHeader = headers['authorization'];
+        console.log("Headers: ", authHeader);
 
         if (!authHeader) {
             const baseResponse = new BaseResponse("Error", "Token not provided", false, 401);
             baseResponse.apply(res);
             return;
         }
-        const token = authHeader[0].split(' ')[1]
+        const token = authHeader.split(' ')[1];
         try {
             JWTMiddleware.addToBlacklist(token);
             await this.useSaga.sendToken(token);

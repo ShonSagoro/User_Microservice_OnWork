@@ -39,6 +39,7 @@ import { UpdateProfileUserController } from "../controllers/UpdateProfileUserCon
 import { UpdateRoleUserController } from "../controllers/UpdateRoleUserController";
 import { UpdateUbicationController } from "../controllers/UpdateUbicationController";
 import { UpdateUserController } from "../controllers/UpdateUserController";
+import { ValidateUserController } from "../controllers/ValidateUserController";
 import { MysqlUserRepository } from "../repositories/MysqlUserRepository";
 import { ByEncryptServices } from "../services/ByEncryptServices";
 import { NodemailerEmailService } from "../services/NodemailerEmailService";
@@ -94,3 +95,4 @@ export const refreshTokenUserController = new RefreshTokenUserController(refresh
 export const getByTagUuidController = new GetUserByTagUuidController(getByTagUseCase);
 export const getByUbicationController = new GetUserByUbicationController(getByUbicationUseCase);
 export const findUserByUbicationController = new FindUserByUbicationController(findUserByUbicationUseCase);
+export const validateUserController = new ValidateUserController();

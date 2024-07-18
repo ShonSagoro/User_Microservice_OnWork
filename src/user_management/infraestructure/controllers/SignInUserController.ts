@@ -1,5 +1,6 @@
 import JWTMiddleware from '../../../middleware/JWTMiddleware';
 import { BaseResponse } from "../../application/dtos/response/BaseResponse";
+import { UserResponse } from '../../application/dtos/response/UserResponse';
 import { SignInUserUseCase } from '../../application/use_case/SignInUserUseCase';
 import { Request, Response } from "express";
 
@@ -10,8 +11,8 @@ export class SignInUserController {
         try {
             let baseResponse = await this.useCase.execute(req);
             if (baseResponse.success) {
-                const uuid = baseResponse.data.uuid;
-                const token = await JWTMiddleware.GenerateToken({ uuid: uuid });
+                const user: UserResponse = baseResponse.data.user;
+                const token = await JWTMiddleware.GenerateToken(user);
                 baseResponse.data.jwt_token = token;
                 baseResponse.apply(res);
             } 
