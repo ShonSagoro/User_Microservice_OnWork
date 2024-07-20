@@ -1,6 +1,3 @@
-import { Message } from '../../domain/entities/message';
-import { MessageResponse } from '../dtos/response/MessageResponse';
-import { CreateMessageRequest } from '../dtos/request/CreateMessageRequest';
 import { Request } from 'express';
 import { CreateChatRequest } from '../dtos/request/CreateChatRequest';
 import { Chat } from '../../domain/entities/chat';

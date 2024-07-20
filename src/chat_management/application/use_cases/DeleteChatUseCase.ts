@@ -1,8 +1,9 @@
+import ChatInterface from "../../domain/port/chat_interface";
 import { MessageInterface } from "../../domain/port/message_interface";
 import { BaseResponse } from "../dtos/response/BaseResponse";
 
-export class DeleteMessageUseCase {
-    constructor(readonly repository: MessageInterface) {}
+export class DeleteChatUseCase {
+    constructor(readonly repository: ChatInterface) {}
 
     async execute(uuid: string): Promise<BaseResponse> {
         let result = await this.repository.delete(uuid);

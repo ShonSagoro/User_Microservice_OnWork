@@ -115,7 +115,6 @@ export class MysqlUserRepository implements UserInterface {
                 if (!user || user.role != "SERVICE_PROVIDER") return null;
                 if (await this.encryptionService.compare(password, user.credentials.password)) {
                     await UserEntity.update({ isLogging: true }, { where: { uuid: user.uuid }, transaction });
-
                     return user;
                 } else {
                     return null;
