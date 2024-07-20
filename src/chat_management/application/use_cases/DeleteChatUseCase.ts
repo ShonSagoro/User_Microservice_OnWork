@@ -8,8 +8,8 @@ export class DeleteChatUseCase {
     async execute(uuid: string): Promise<BaseResponse> {
         let result = await this.repository.delete(uuid);
         if (result) {
-            return new BaseResponse(null, 'Message deleted successfully', true, 200);
+            return new BaseResponse(null, 'Chat deleted successfully', true, 200);
         }
-        return new BaseResponse(null, 'Message not found', false, 404);
+        return new BaseResponse(null, 'Chat not found', false, 404);
     }
 }
