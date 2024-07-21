@@ -15,6 +15,7 @@ import { TokenAuthServices } from "../services/TokenServices";
 import { ByEncryptServices } from "../services/ByEncryptServices";
 
 export class MysqlUserRepository implements UserInterface {
+
     private _userTagRepository: MysqlUserTagRepository | null = null;
     private _tagRepository: MysqlTagRepository | null = null;
     private _encryptionService: EncryptService | null = null;
@@ -47,6 +48,8 @@ export class MysqlUserRepository implements UserInterface {
         }
         return this._tagRepository;
     }
+
+
 
     async find_all_tags_by_user_uuid(uuid: string): Promise<Tag[] | null> {
         try {
@@ -206,214 +209,226 @@ export class MysqlUserRepository implements UserInterface {
         }
     }
 
-    async list(transaction ?: any): Promise < User[] | null > {
-    try {
-        const userEntities = await UserEntity.findAll({
-            transaction,
-        });
-        const users = await Promise.all(userEntities.map(async (userEntity) => {
-            let tagsEntities = await this.findTagsByUser(userEntity.uuid);
-            return UserDaoMapper.toDomain(userEntity, tagsEntities);
-        }));
-        return users;
-    } catch(error) {
-        console.error('Error listing users:', error);
-        return null;
-    }
-}
-
-    async delete (uuid: string, transaction ?: any): Promise < boolean > {
-    try {
-        await this.userTagRepository.deleteByUuidUser(uuid);
-        await UserEntity.destroy({ where: { uuid }, transaction });
-        return true;
-    } catch(error) {
-        console.error('Error deleting user:', error);
-        return false;
-    }
-}
-
-    async update(uuid: string, user: User, transaction ?: any): Promise < User | null > {
-    try {
-        const existingUser = await this.findByUUID(uuid);
-        if(!existingUser) return null;
-
-        const updateData: Partial<UserEntity> = UserDaoMapper.toUpdateEntity(user, uuid);
-
-        await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update(
-                {
-                    email: updateData.email,
-                    name: updateData.name,
-                    lastName: updateData.lastName,
-                    phoneNumber: updateData.phoneNumber,
-                    birthday: updateData.birthday,
-                    region: updateData.region,
-
-                }, {
-                where: { uuid },
-                transaction
+    async list(transaction?: any): Promise<User[] | null> {
+        try {
+            const userEntities = await UserEntity.findAll({
+                transaction,
             });
-        });
-
-        return await this.findByUUID(uuid, transaction);
-    } catch(error) {
-        console.error('Error updating user:', error);
-        return null;
+            const users = await Promise.all(userEntities.map(async (userEntity) => {
+                let tagsEntities = await this.findTagsByUser(userEntity.uuid);
+                return UserDaoMapper.toDomain(userEntity, tagsEntities);
+            }));
+            return users;
+        } catch (error) {
+            console.error('Error listing users:', error);
+            return null;
+        }
     }
-}
-    
 
-    
-
-    async sign_up(user: User): Promise < User | null > {
-    try {
-        user.credentials.password = await this.encryptionService.execute(user.credentials.password);
-        let userExists = await this.findByEmail(user.credentials.email);
-        if(userExists) return null;
-        return await this.withTransaction(async (transaction: any) => {
-            user.status.token = await this.tokenServices.generateToken();
-            const userEntity = UserDaoMapper.toEntity(user);
-            await userEntity.save({ transaction });
-            return user;
-        });
-    } catch(error) {
-        console.error('Error creating user:', error);
-        return null;
+    async delete(uuid: string, transaction?: any): Promise<boolean> {
+        try {
+            await this.userTagRepository.deleteByUuidUser(uuid);
+            await UserEntity.destroy({ where: { uuid }, transaction });
+            return true;
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            return false;
+        }
     }
-}
 
-    async sign_in(email: string, password: string): Promise < User | null > {
-    try {
-        return await this.withTransaction(async (transaction: any) => {
-            let user = await this.findByEmail(email, transaction);
-            if (!user) return null;
-            if (await this.encryptionService.compare(password, user.credentials.password)) {
-                user.status.isLoggin = true;
-                await UserEntity.update({ isLogging: true }, { where: { uuid: user.uuid }, transaction });
+    async update(uuid: string, user: User, transaction?: any): Promise<User | null> {
+        try {
+            const existingUser = await this.findByUUID(uuid);
+            if (!existingUser) return null;
+
+            const updateData: Partial<UserEntity> = UserDaoMapper.toUpdateEntity(user, uuid);
+
+            await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update(
+                    {
+                        email: updateData.email,
+                        name: updateData.name,
+                        lastName: updateData.lastName,
+                        phoneNumber: updateData.phoneNumber,
+                        birthday: updateData.birthday,
+                        region: updateData.region,
+
+                    }, {
+                    where: { uuid },
+                    transaction
+                });
+            });
+
+            return await this.findByUUID(uuid, transaction);
+        } catch (error) {
+            console.error('Error updating user:', error);
+            return null;
+        }
+    }
+
+
+
+
+    async sign_up(user: User): Promise<User | null> {
+        try {
+            user.credentials.password = await this.encryptionService.execute(user.credentials.password);
+            let userExists = await this.findByEmail(user.credentials.email);
+            if (userExists) return null;
+            return await this.withTransaction(async (transaction: any) => {
+                user.status.token = await this.tokenServices.generateToken();
+                const userEntity = UserDaoMapper.toEntity(user);
+                await userEntity.save({ transaction });
                 return user;
-            } else {
-                return null;
-            }
-        });
-    } catch(error) {
-        console.error('Error signing in:', error);
-        return null;
+            });
+        } catch (error) {
+            console.error('Error creating user:', error);
+            return null;
+        }
     }
-}
 
-    async sign_out(uuid: string, transaction ?: any): Promise < boolean > {
-    try {
-        return await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update({ isLogging: false }, { where: { uuid }, transaction });
-            return true;
-        });
-    } catch(error) {
-        console.error('Error signing out:', error);
-        return false;
+    async sign_in(email: string, password: string): Promise<User | null> {
+        try {
+            return await this.withTransaction(async (transaction: any) => {
+                let user = await this.findByEmail(email, transaction);
+                if (!user) return null;
+                if (await this.encryptionService.compare(password, user.credentials.password)) {
+                    user.status.isLoggin = true;
+                    await UserEntity.update({ isLogging: true }, { where: { uuid: user.uuid }, transaction });
+                    return user;
+                } else {
+                    return null;
+                }
+            });
+        } catch (error) {
+            console.error('Error signing in:', error);
+            return null;
+        }
     }
-}
 
-    async update_user_verified_at(uuid: string, token: string): Promise < boolean > {
-    try {
-        let userExists = await this.findByUUID(uuid);
-        if(!userExists) return false;
-        return await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update({ verifiedAt: new Date(), verified: true }, { where: { uuid }, transaction });
-            return true;
-        });
-    } catch(error) {
-        console.error('Error updating user verified at:', error);
-        return false;
+    async sign_out(uuid: string, transaction?: any): Promise<boolean> {
+        try {
+            return await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ isLogging: false }, { where: { uuid }, transaction });
+                return true;
+            });
+        } catch (error) {
+            console.error('Error signing out:', error);
+            return false;
+        }
     }
-}
 
-    async update_password(uuid: string, old_password: string, new_password: string): Promise < User | null > {
-    try {
-        new_password = await this.encryptionService.execute(new_password);
-        let userExists = await this.findByUUID(uuid);
-        if(!userExists) return null;
-        if(!await this.encryptionService.compare(old_password, userExists.credentials.password)) return null;
-        await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update({ password: new_password }, { where: { uuid }, transaction });
-        });
-        userExists.credentials.password = new_password;
-        return userExists;
-    } catch(error) {
-        console.error('Error updating user password:', error);
-        return null;
+    async update_image(uuid: string, url_image: string): Promise<User | null> {
+        try {
+            let user = await this.findByUUID(uuid);
+            if (!user) return null;
+            await UserEntity.update({ "url_image": url_image }, { where: { uuid } });
+            return await this.findByUUID(uuid);
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            return null;
+        }
     }
-}
 
-    async update_role(uuid: string, role: string): Promise < User | null > {
-    try {
-        let userExists = await this.findByUUID(uuid);
-        if(!userExists) return null;
-        await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update({ role: role }, { where: { uuid }, transaction });
-        });
-        const updatedUser = await this.findByUUID(uuid);
-        return updatedUser;
-    } catch(error) {
-        console.error('Error updating user plan:', error);
-        return null;
+    async update_user_verified_at(uuid: string, token: string): Promise<boolean> {
+        try {
+            let userExists = await this.findByUUID(uuid);
+            if (!userExists) return false;
+            return await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ verifiedAt: new Date(), verified: true }, { where: { uuid }, transaction });
+                return true;
+            });
+        } catch (error) {
+            console.error('Error updating user verified at:', error);
+            return false;
+        }
     }
-}
 
-    async update_plan(uuid: string, plan: string): Promise < User | null > {
-    try {
-        let userExists = await this.findByUUID(uuid);
-        if(!userExists) return null;
-        await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update({ plan: plan }, { where: { uuid }, transaction });
-        });
-        const updatedUser = await this.findByUUID(uuid);
-        return updatedUser;
-    } catch(error) {
-        console.error('Error updating user plan:', error);
-        return null;
+    async update_password(uuid: string, old_password: string, new_password: string): Promise<User | null> {
+        try {
+            new_password = await this.encryptionService.execute(new_password);
+            let userExists = await this.findByUUID(uuid);
+            if (!userExists) return null;
+            if (!await this.encryptionService.compare(old_password, userExists.credentials.password)) return null;
+            await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ password: new_password }, { where: { uuid }, transaction });
+            });
+            userExists.credentials.password = new_password;
+            return userExists;
+        } catch (error) {
+            console.error('Error updating user password:', error);
+            return null;
+        }
     }
-}
 
-    async update_profile(uuid: string, profile: Profile): Promise < User | null > {
-    try {
-        let userExists = await this.findByUUID(uuid);
-        if(!userExists) return null;
-        await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update({ description: profile.description, company: profile.company }, { where: { uuid }, transaction });
-        });
-        const updatedUser = await this.findByUUID(uuid);
-        return updatedUser;
-    } catch(error) {
-        console.error('Error updating user plan:', error);
-        return null;
+    async update_role(uuid: string, role: string): Promise<User | null> {
+        try {
+            let userExists = await this.findByUUID(uuid);
+            if (!userExists) return null;
+            await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ role: role }, { where: { uuid }, transaction });
+            });
+            const updatedUser = await this.findByUUID(uuid);
+            return updatedUser;
+        } catch (error) {
+            console.error('Error updating user plan:', error);
+            return null;
+        }
     }
-}
 
-    async update_ubication(uuid: string, longitude: number, latitude: number): Promise < User | null > {
-    try {
-        let userExists = await this.findByUUID(uuid);
-        if(!userExists) return null;
-        await this.withTransaction(async (transaction: any) => {
-            await UserEntity.update({ latitude: latitude, longitude: longitude }, { where: { uuid }, transaction });
-        });
-        const updatedUser = await this.findByUUID(uuid);
-        return updatedUser;
-    } catch(error) {
-        console.error('Error updating user plan:', error);
-        return null;
+    async update_plan(uuid: string, plan: string): Promise<User | null> {
+        try {
+            let userExists = await this.findByUUID(uuid);
+            if (!userExists) return null;
+            await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ plan: plan }, { where: { uuid }, transaction });
+            });
+            const updatedUser = await this.findByUUID(uuid);
+            return updatedUser;
+        } catch (error) {
+            console.error('Error updating user plan:', error);
+            return null;
+        }
     }
-}
 
-    private async withTransaction(callback: (transaction: any) => Promise<any>): Promise < any > {
-    const transaction = await sequelize.transaction();
-    try {
-        const result = await callback(transaction);
-        await transaction.commit();
-        return result;
-    } catch(error) {
-        await transaction.rollback();
-        throw error;
+    async update_profile(uuid: string, profile: Profile): Promise<User | null> {
+        try {
+            let userExists = await this.findByUUID(uuid);
+            if (!userExists) return null;
+            await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ description: profile.description, company: profile.company }, { where: { uuid }, transaction });
+            });
+            const updatedUser = await this.findByUUID(uuid);
+            return updatedUser;
+        } catch (error) {
+            console.error('Error updating user plan:', error);
+            return null;
+        }
     }
-}
+
+    async update_ubication(uuid: string, longitude: number, latitude: number): Promise<User | null> {
+        try {
+            let userExists = await this.findByUUID(uuid);
+            if (!userExists) return null;
+            await this.withTransaction(async (transaction: any) => {
+                await UserEntity.update({ latitude: latitude, longitude: longitude }, { where: { uuid }, transaction });
+            });
+            const updatedUser = await this.findByUUID(uuid);
+            return updatedUser;
+        } catch (error) {
+            console.error('Error updating user plan:', error);
+            return null;
+        }
+    }
+
+    private async withTransaction(callback: (transaction: any) => Promise<any>): Promise<any> {
+        const transaction = await sequelize.transaction();
+        try {
+            const result = await callback(transaction);
+            await transaction.commit();
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
+    }
 }

@@ -101,7 +101,7 @@ export class UserDtoMapper {
         return new UpdateUbicationUserRequest(parseFloat(body.latitude), parseFloat(body.longitude));
     }
     static toUserResponse(user: User): UserResponse {
-        let response = new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.plan, user.role, user.ubication.latitude, user.ubication.longitude, user.profile.description, user.profile.company);
+        let response = new UserResponse(user.uuid, user.contact.name, user.credentials.email, user.contact.lastName, user.contact.phoneNumber, user.contact.birthday.toISOString().split('T')[0], user.contact.region, user.plan, user.role, user.ubication.latitude, user.ubication.longitude, user.profile.description, user.profile.company, user.url_image);
         response.tags = user.tags.map((tag) => TagDtoMapper.toTagResponse(tag));
         return response;
     }
@@ -143,7 +143,7 @@ export class UserDtoMapper {
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
-        return new User(contact, credentials, status, plan, role, ubication, profile, []);
+        return new User(contact, credentials, status, plan, role, ubication, profile, [], "");
     }
 
     static toDomainUserProviderSignUp(signUpUserRequest: SignUpUserRequest): User {
@@ -154,7 +154,7 @@ export class UserDtoMapper {
         let role = Role.SERVICE_PROVIDER;
         let ubication = new Ubication(0,0);
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
-        return new User(contact, credentials, status, plan, role, ubication, profile, []);
+        return new User(contact, credentials, status, plan, role, ubication, profile, [],"");
     }  
 
     static toDomainUserUpdate(updateUserRequest: UpdateUserRequest): User {
@@ -165,7 +165,7 @@ export class UserDtoMapper {
         let role = Role.CLIENT;
         let ubication = new Ubication(0,0);
         let profile = new Profile("we don't know anything yet about this person, but we think he's great.", "");
-         return new User(contact, credentials, status, plan, role, ubication, profile, []);
+         return new User(contact, credentials, status, plan, role, ubication, profile, [], "");
     }
 
     static toUserProviderResponse(user:User): UserProviderResponse{

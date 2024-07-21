@@ -29,10 +29,12 @@ export class User implements ValidatableEntity {
     
     public profile: Profile;
 
+    public url_image: string;
+
     public tags: Tag[];
 
 
-    constructor(contact: Contact, credentials: Credentials, status: Status, plan: Plan, role: Role, ubication: Ubication, profile: Profile, tags: Tag[]) {
+    constructor(contact: Contact, credentials: Credentials, status: Status, plan: Plan, role: Role, ubication: Ubication, profile: Profile, tags: Tag[], url_image: string) {
         this.uuid = uuidv4();
         this.contact=contact
         this.credentials=credentials
@@ -42,6 +44,7 @@ export class User implements ValidatableEntity {
         this.ubication=ubication
         this.profile=profile
         this.tags=tags
+        this.url_image=url_image
     }
 
     async validate() {

@@ -50,7 +50,8 @@ export class UserDaoMapper {
             role,
             ubication,
             profile,
-            tagsDomain
+            tagsDomain,
+            userEntity.dataValues.url_image
         );
         
         user.uuid = userEntity.dataValues.uuid;
@@ -89,7 +90,8 @@ export class UserDaoMapper {
                 description: user.profile.description,
                 company: user.profile.company,
                 isLogging: user.status.isLoggin,
-                verified: user.status.verified
+                verified: user.status.verified,
+                image_url: user.url_image
             }
         );
     }

@@ -1,7 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../database/mysqldb';
-import TagEntity from './TagEntity';
-import { Sequelize } from 'sequelize';
 
 class UserEntity extends Model {
     public uuid!: string;
@@ -22,6 +20,7 @@ class UserEntity extends Model {
     public company!: string;
     public isLogging!: boolean;
     public verified!: boolean;
+    public url_image!: string;
 }
 
 UserEntity.init(
@@ -97,6 +96,10 @@ UserEntity.init(
         },
         verified: {
             type: DataTypes.BOOLEAN,
+            allowNull: true,
+        },
+        url_image: {
+            type: DataTypes.STRING,
             allowNull: true,
         },
     },

@@ -47,10 +47,15 @@ import { ByEncryptServices } from "../services/ByEncryptServices";
 import { NodemailerEmailService } from "../services/NodemailerEmailService";
 import { TokenAuthServices } from "../services/TokenServices";
 import { UserSagaImpl } from "../services/UserSagaImpl";
+import { S3Services } from "../services/S3Services";
+import { UpdateImageUserUseCase } from "../../application/use_case/UpdateImageUserUseCase";
+import { UpdateImageUserController } from "../controllers/UpdateImageUserController";
 
 const userRepository = new MysqlUserRepository();
 const emailService = new NodemailerEmailService();
 const userSaga = new UserSagaImpl();
+
+const s3Services = new S3Services();
 
 export const signUpUserCase = new SignUpUserUseCase(userRepository);
 export const getUserUseCase = new GetByUserUseCase(userRepository);
@@ -73,6 +78,8 @@ export const getByTagUseCase = new GetByTagUserUseCase(userRepository);
 export const getByUbicationUseCase = new GetByUbicationUserUseCase(userRepository);
 export const findUserByUbicationUseCase = new FindUserByUbicationUseCase(userRepository);
 export const getTokenValidateByUuidUserUseCase = new GetTokenValidateByUuidUserUseCase(userRepository);
+export const updateImageUserUseCase = new UpdateImageUserUseCase(userRepository);
+
 
 export const signInUserController = new SignInUserController(signInUserCase);
 export const signUpUserController = new SingUpUserController(signUpUserCase, emailService);
@@ -97,3 +104,4 @@ export const getByUbicationController = new GetUserByUbicationController(getByUb
 export const findUserByUbicationController = new FindUserByUbicationController(findUserByUbicationUseCase);
 export const validateUserController = new ValidateUserController();
 export const getTokenValidateByUuidUserController = new GetTokenValidateByUuidUserController(getTokenValidateByUuidUserUseCase, emailService);
+export const updateImageUserController = new UpdateImageUserController(updateImageUserUseCase, s3Services);

@@ -24,4 +24,5 @@ export interface UserInterface {
     find_by_tag_uuid(uuid:string):Promise<User[]|null>; //direct
     refresh_token(uuid:string):Promise<User|null>;
     find_all_tags_by_user_uuid(uuid:string):Promise<Tag[]|null>;
+    update_image(uuid:string, url_image: string):Promise<User|null>;
 }
