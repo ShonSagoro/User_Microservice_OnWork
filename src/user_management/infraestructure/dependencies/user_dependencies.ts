@@ -4,6 +4,7 @@ import { FindUserByUbicationUseCase } from "../../application/use_case/FindUserB
 import { GetByTagUserUseCase } from "../../application/use_case/GetByTagUserUseCase";
 import { GetByUbicationUserUseCase } from "../../application/use_case/GetByUbicationUserUseCase";
 import { GetByUserUseCase } from "../../application/use_case/GetByUserUseCase";
+import { GetTokenValidateByUuidUserUseCase } from "../../application/use_case/GetTokenValidateByUuidUserUseCase";
 import { ListUsersProvidersUseCase } from "../../application/use_case/ListUsersProvidersUseCase";
 import { ListUsersUseCase } from "../../application/use_case/ListUsersUseCase";
 import { RefreshUserUseCase } from "../../application/use_case/RefreshUserUseCase";
@@ -21,6 +22,7 @@ import { UpdateUserUseCase } from "../../application/use_case/UpdateUserUseCase"
 import { ActivateUserController } from "../controllers/ActivateUserController";
 import { DeleteUserController } from "../controllers/DeleteUserController";
 import FindUserByUbicationController from "../controllers/FindUserByUbicationController";
+import { GetTokenValidateByUuidUserController } from "../controllers/GetTokenValidateByUuidUserController";
 import GetUserByEmailController from "../controllers/GetUserByEmailController";
 import GetUserByTagUuidController from "../controllers/GetUserByTagUuidController";
 import GetUserByUbicationController from "../controllers/GetUserByUbicationController";
@@ -47,9 +49,7 @@ import { TokenAuthServices } from "../services/TokenServices";
 import { UserSagaImpl } from "../services/UserSagaImpl";
 
 const userRepository = new MysqlUserRepository();
-const encryptServices = new ByEncryptServices();
 const emailService = new NodemailerEmailService();
-const tokenServices = new TokenAuthServices();
 const userSaga = new UserSagaImpl();
 
 export const signUpUserCase = new SignUpUserUseCase(userRepository);
@@ -72,7 +72,7 @@ export const refreshTokenUseCase = new RefreshUserUseCase(userRepository);
 export const getByTagUseCase = new GetByTagUserUseCase(userRepository);
 export const getByUbicationUseCase = new GetByUbicationUserUseCase(userRepository);
 export const findUserByUbicationUseCase = new FindUserByUbicationUseCase(userRepository);
-
+export const getTokenValidateByUuidUserUseCase = new GetTokenValidateByUuidUserUseCase(userRepository);
 
 export const signInUserController = new SignInUserController(signInUserCase);
 export const signUpUserController = new SingUpUserController(signUpUserCase, emailService);
@@ -96,3 +96,4 @@ export const getByTagUuidController = new GetUserByTagUuidController(getByTagUse
 export const getByUbicationController = new GetUserByUbicationController(getByUbicationUseCase);
 export const findUserByUbicationController = new FindUserByUbicationController(findUserByUbicationUseCase);
 export const validateUserController = new ValidateUserController();
+export const getTokenValidateByUuidUserController = new GetTokenValidateByUuidUserController(getTokenValidateByUuidUserUseCase, emailService);
