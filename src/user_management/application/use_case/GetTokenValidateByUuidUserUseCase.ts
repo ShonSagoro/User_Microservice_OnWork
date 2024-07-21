@@ -7,8 +7,8 @@ import { UserDtoMapper } from "../mappers/UserDtoMapper";
 export class GetTokenValidateByUuidUserUseCase {
     constructor(readonly userInterface: UserInterface) {}
 
-    async execute(uuid:string): Promise<BaseResponse> {
-        let result = await this.userInterface.findByUUID(uuid);
+    async execute(email:string): Promise<BaseResponse> {
+        let result = await this.userInterface.findByEmail(email);
         if (result) {
             let response = UserDtoMapper.toSingUpUserResponse(result);
             return new BaseResponse(response, 'User Token has been send', true, 200);

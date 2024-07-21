@@ -10,8 +10,9 @@ export class GetTokenValidateByUuidUserController {
 
     async execute(req: Request, res: Response) {
         try {
-            let uuid = req.params.uuid;
-            let baseResponse = await this.useCase.execute(uuid);
+            let email = req.params.email;
+            console.log("GetTokenValidateByUuidUserController -> execute: ", email);
+            let baseResponse = await this.useCase.execute(email);
             if (!baseResponse.success) {
                 baseResponse.apply(res);
                 return;

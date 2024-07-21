@@ -10,7 +10,7 @@ export function setupUserEndpoints(app: Express) {
         res.status(200).json({ status: 'OK' });
     });
     app.get(`/${model}/`, Verifytoken, listUsersController.execute.bind(listUsersController));
-    app.get(`/${model}/token/:uuid`, getTokenValidateByUuidUserController.execute.bind(getTokenValidateByUuidUserController));
+    app.get(`/${model}/token/:email`, getTokenValidateByUuidUserController.execute.bind(getTokenValidateByUuidUserController));
     app.get(`/${model}/sign_out/:uuid`, Verifytoken, signOutUserController.execute.bind(signOutUserController));
     app.get(`/${model}/providers`, Verifytoken, listUsersProvidersController.execute.bind(listUsersProvidersController));
     app.get(`/${model}/validate`, Validate, validateUserController.execute.bind(validateUserController));
