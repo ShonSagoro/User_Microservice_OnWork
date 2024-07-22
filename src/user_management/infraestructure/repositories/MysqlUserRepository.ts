@@ -420,6 +420,40 @@ export class MysqlUserRepository implements UserInterface {
         }
     }
 
+
+    async get_device_connected(uuid: string): Promise<any | null> {
+        try {
+            const user = await this.findByUUID(uuid);
+            if (!user) return null;
+            const connectedDevices = await UserEntity.findAll({
+                where: { uuid: uuid }, 
+                attributes: ['deviceId', 'ipAddress', 'location']
+            });
+            return {
+                user,
+                connectedDevices
+            };
+        } catch (error) {
+            console.error('Error getting sensitive activities:', error);
+            return null;
+        }
+    }
+    
+    async block_device(uuid: string, deviceId: string): Promise<boolean> {
+        try {
+            await UserEntity.update({ isBlocked: true }, {
+                where: {
+                    uuid: uuid,
+                    deviceId: deviceId
+                }
+            });
+            return true;
+        } catch (error) {
+            console.error('Error blocking device:', error);
+            return false;
+        }
+    }
+
     private async withTransaction(callback: (transaction: any) => Promise<any>): Promise<any> {
         const transaction = await sequelize.transaction();
         try {

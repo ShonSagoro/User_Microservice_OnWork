@@ -15,7 +15,7 @@ export function setupUserEndpoints(app: Express) {
     app.get(`/${model}/sign_out/:uuid`, Verifytoken, signOutUserController.execute.bind(signOutUserController));
     app.get(`/${model}/providers`, Verifytoken, listUsersProvidersController.execute.bind(listUsersProvidersController));
     app.get(`/${model}/validate`, Validate, validateUserController.execute.bind(validateUserController));
-    app.get(`/${model}/refresh/:uuid`, Verifytoken, refreshTokenUserController.execute.bind(refreshTokenUserController));
+    app.get(`/${model}/refresh/:uuid`, refreshTokenUserController.execute.bind(refreshTokenUserController));
     app.get(`/${model}/tag/:uuid`, Verifytoken, getByTagUuidController.execute.bind(getByTagUuidController));
     app.get(`/${model}/:uuid`, Verifytoken, getByUuidController.execute.bind(getByUuidController));
     app.post(`/${model}/ubication`,Verifytoken,  getByUbicationController.execute.bind(getByUbicationController));
@@ -26,7 +26,7 @@ export function setupUserEndpoints(app: Express) {
     app.post(`/${model}/sign_in_provider`, signInProviderUserController.execute.bind(signInProviderUserController));
     app.post(`/${model}/activate/:uuid`, activateUserController.execute.bind(activateUserController));
     app.delete(`/${model}/:uuid`, Verifytoken, deleteUserController.execute.bind(deleteUserController));
-    app.put(`/${model}/image/:uuid`, Verifytoken, upload.single('image'), updateImageUserController.execute.bind(updateImageUserController));
+    app.put(`/${model}/image/:uuid`, Verifytoken, upload.single('image  '), updateImageUserController.execute.bind(updateImageUserController));
     app.put(`/${model}/password/:uuid`, Verifytoken, updatePasswordUserController.execute.bind(updatePasswordUserController));
     app.put(`/${model}/plan/:uuid`, Verifytoken, updatePlanUserController.execute.bind(updatePlanUserController));
     app.put(`/${model}/profile/:uuid`, Verifytoken, updateProfileUserController.execute.bind(updateProfileUserController));
